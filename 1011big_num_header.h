@@ -15,8 +15,7 @@ typedef unsigned long long word;
 #define NON_NEGATIVE 0
 #define NEGATIVE 1
 
-
-
+#define word_modulo 2 << WORD_BITLEN -1
 
 /* Dynamic Memory Allocation */
 typedef struct {
@@ -37,6 +36,14 @@ typedef struct{
 } bigint;
 */
 
+#define ZERORIZE 0
+void array_init(word * a, int wordlen)
+{
+	for (int i = 0; i < wordlen; i++)
+	{
+		a[i] = 0x00;
+	}
+}
 /* 2.1 Create BigInt, Delete BigInt, Zeroize BigInt */
 void bi_delete(bigint** x)
 {
@@ -55,26 +62,16 @@ void bi_delete(bigint** x)
 void bi_new(bigint** x, int wordlen)
 {
 	if (*x != NULL)
-	{
-		printf("==\n");
 		bi_delete(x);
-	}
 
-
-	printf("===\n");
 	*x = (bigint*)malloc(sizeof(bigint));
-	(*x)->sign = NON_NEGATIVE;
-	(*x)->wordlen = wordlen;
-	(*x)->a = (word*)calloc(wordlen, sizeof(word));
-	printf("====\n");
-}
-
-// zeroize??
-void zeroize(bigint** x)
-{
-	for (int i = 0; i < (*x)->wordlen; i++)
+	if (*x == NULL)
+		return;
+	else
 	{
-		(*x)->a[i] = 0x00;
+		(*x)->sign = NON_NEGATIVE;
+		(*x)->wordlen = wordlen;
+		(*x)->a = (word*)calloc(wordlen, sizeof(word));
 	}
 }
 
@@ -131,14 +128,7 @@ void bi_set_by_string(bigint** x, int sign, char* a, word base)   // bigint x <-
 }
 */
 
-
-/*
-void bi_show_hex(bigint* x);    // show x in hexa representation.
-void bi_show_dec(bigint* x);    // show x in decimal representation.
-void bi_show_bin(bigint* x);    // show x in binary representation.
-*/
-// bi_show(bigint* x, base) 형태로 구현하는 것을 추천.
-// developed by CJH
+// Show big int
 void bi_show(bigint* x, word base)
 {
 	if (x->sign == NEGATIVE) printf("-");
@@ -163,17 +153,14 @@ void bi_show(bigint* x, word base)
 	else if (base == 16)
 	{
 		for (int i = x->wordlen - 1; i >= 0; i--)
-			printf("%04x", x->a[i]);
+			printf("%x", x->a[i]);
 		printf("\n");
 
 	}
 
 }
 
-
-
-
-/* 2.3 Refine BigInt (Remove Last Zero Words) */        //????????????????????
+/* 2.3 Refine BigInt (Remove Last Zero Words) */
 void bi_refine(bigint* x)
 {
 	if (x == NULL)
@@ -191,15 +178,12 @@ void bi_refine(bigint* x)
 		x->wordlen = new_wordlen;
 		x->a = (word*)realloc(x->a, sizeof(word) * new_wordlen);
 	}
-
-	if ((x->wordlen == 1) && (x->a[0] == 0x0))
+	else if ((x->wordlen == 1) && (x->a[0] == 0x0))
 		x->sign = NON_NEGATIVE;
+
 }
-
-
 /* 2.4 Assign BigInt */
-// developed by CJH
-void array_copy(word y[], word x[], int wordlen)    // 이렇게 하면 call by value?? call by reference 하고싶으면 word* y[]??
+void array_copy(word y[], word x[], int wordlen)    // 수정 필요
 {
 	for (int i = 0; i < wordlen; i++)
 	{
@@ -207,23 +191,22 @@ void array_copy(word y[], word x[], int wordlen)    // 이렇게 하면 call by 
 	}
 }
 
-
 void bi_assign(bigint** y, bigint* x)
 {
 	if (*y != NULL)
 		bi_delete(y);
-
 	bi_new(y, x->wordlen);
 	(*y)->sign = x->sign;
-	array_copy((*y)->a, x->a, x->wordlen);      // array_copy는 내가 구현해야 함?????
+	array_copy((*y)->a, x->a, x->wordlen);
 }
-
 
 /* 2.5 Generate Random BigInt */
 void array_rand(word* dst, int wordlen)
 {
-	unsigned char* p = (unsigned char*)dst;       // byte 선언 필요???
+	unsigned char* p = (unsigned char*)dst;
+
 	int cnt = wordlen * sizeof(word);
+
 	while (cnt > 0)
 	{
 		*p = rand() & 0xff;
@@ -243,8 +226,6 @@ void bi_gen_rand(bigint** x, int sign, int wordlen)
 }
 
 
-
-
 /* 2.6 Get Word Lengh / Bit Length / j-th Bit of BigInt */
 int get_wordlen(bigint* x)
 {
@@ -253,7 +234,6 @@ int get_wordlen(bigint* x)
 
 int get_bitlen(bigint* x)
 {
-	// NEED TO IMPLEMENT
 	int bitlen = (x->wordlen - 1) * WORD_BITLEN;
 	int b;
 	for (int i = WORD_BITLEN - 1; i >= 0; i--)
@@ -269,23 +249,21 @@ int get_bitlen(bigint* x)
 
 int get_jth_bit(bigint* x, int j)
 {
-	// NEED TO IMPLEMENT
 	int Q = j / WORD_BITLEN;
 	int R = j % WORD_BITLEN;
 
 	if (R == 0)
 	{
-		return ((x->a[Q - 1]) >> WORD_BITLEN - 1) % 0x01;
+		return (x->a[Q]) & 0x01;
 	}
 	else
 	{
-		return ((x->a[Q]) >> R - 1) % 0x01;
+		return ((x->a[Q]) >> R) & 0x01;
 	}
 }
 
 
 /* 2.7 Get Sign and Flip Sign of BigInt */
-// developed by CJH
 int bi_get_sign(bigint* x)
 {
 	return x->sign;
@@ -300,9 +278,7 @@ void bi_flip_sign(bigint** x)
 }
 
 
-/* 2.8 Set One, Set Zero, Is Zero?, Is One? */
-// is zero, is one 구현 필요
-// developed by CJH
+/* 2.8 Set One, Set Zero, Is Zero, Is One */
 void bi_set_one(bigint** x)
 {
 	bi_new(x, 1);
@@ -347,9 +323,7 @@ int is_one(bigint* x)  // 1이면 1, 1이 아니면 0을 반환한다.
 	return 1;
 }
 
-
 /* 2.9 Compare ABS, Compare AB*/
-// developed by CJH
 int Compare_ABS(bigint* A, bigint* B) // 음이 아닌 정수 A, B의 대수 비교. A > B : 1 리턴, A = B : 0 리턴, A < B : -1 리턴 
 {
 	int n = A->wordlen;
@@ -382,55 +356,50 @@ int Compare_AB(bigint** A, bigint** B)
 		return -1;
 
 
-	int ret = Compare_ABS(*A, *B);        // 그냥 A와 B?
+	int ret = Compare_ABS(*A, *B);
 	if (sign_a == 0)
 		return ret;
 	else
-		return ret ^ 1;
+		return ret * (-1);
 }
 
 /* 2.10 Left / Right Shift */
-
 void Left_Shift(bigint** x, int r)
 {
-
-	bigint shifted_bi;  // 크기가 wordlen + Q + 1 인 bigint 구조체 생성
-	bigint* shifted_bi_pointer = &shifted_bi;
+	bigint* shifted_bi = NULL;  // 크기가 wordlen + Q + 1 인 bigint 구조체 생성
 
 	if (r >= WORD_BITLEN * (*x)->wordlen)       // r >= w * n : 모든 bigint = 0
 	{
-		bi_set_zero(&shifted_bi_pointer);
+		bi_new(&shifted_bi, 1);
+		bi_set_zero(&shifted_bi);
 	}
 	else
 	{
 		int Q = r / WORD_BITLEN;                // r = w * Q + R  (0 <= R < w)
 		int R = r % WORD_BITLEN;
-		(*x)->wordlen += Q + 1;
+		(*x)->wordlen = ((*x)->wordlen) + Q + 1;
 
-		bi_new(&shifted_bi_pointer, (*x)->wordlen);
-		shifted_bi.sign = (*x)->sign;
+		bi_new(&shifted_bi, (*x)->wordlen);
+		shifted_bi->sign = (*x)->sign;
 
 		if (R == 0)     // r이 정확히 w의 배수일 때
 		{
-
-			for (int i = (*x)->wordlen - 1; i >= Q; i--)
+			for (int i = ((*x)->wordlen) - 1; i >= Q; i--)
 			{
-				shifted_bi.a[i] = (*x)->a[i - Q];
+				shifted_bi->a[i] = (*x)->a[i - Q];
 			}
 		}
 		else
 		{
-			shifted_bi.a[(*x)->wordlen - 1] = ((*x)->a[(*x)->wordlen - Q - 1]) >> (WORD_BITLEN - R);
-			for (int i = shifted_bi.wordlen - 2; i >= Q; i--)
+			shifted_bi->a[(*x)->wordlen - 1] = ((*x)->a[(*x)->wordlen - Q - 1]) >> (WORD_BITLEN - R);
+			for (int i = shifted_bi->wordlen - 2; i >= Q; i--)
 			{
-				shifted_bi.a[i] = (((*x)->a[i - Q]) << R) | (((*x)->a[i - (Q + 1)]) >> (WORD_BITLEN - R));
+				shifted_bi->a[i] = (((*x)->a[i - Q]) << R) | (((*x)->a[i - (Q + 1)]) >> (WORD_BITLEN - R));
 			}
 		}
-		bi_refine(&shifted_bi);
+		bi_refine(shifted_bi);
 	}
-
-	bi_assign(x, &shifted_bi);
-
+	bi_assign(x, shifted_bi);
 }
 
 
@@ -456,7 +425,7 @@ void Right_Shift(bigint** x, int r)
 		{
 			for (int i = 0; i < size; i++)
 			{
-				shifted_bi.a[i] = (*x)->a[i + Q];        // 정확히 
+				shifted_bi.a[i] = (*x)->a[i + Q];
 			}
 		}
 		else
@@ -476,8 +445,6 @@ void Right_Shift(bigint** x, int r)
 /* 2.11 Reduction */
 void Reduction(bigint** A, int r)
 {
-	//   if (r >=  WORD_BITLEN * (*A)->wordlen)    // 아예 검사할 필요가 없는 경우.. 함수가 작동을 안하면됨.
-
 	if (r < WORD_BITLEN * (*A)->wordlen)
 	{
 		int Q = r / WORD_BITLEN;
@@ -506,3 +473,5 @@ void Reduction(bigint** A, int r)
 		bi_refine(*A);
 	}
 }
+
+
