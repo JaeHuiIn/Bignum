@@ -9,6 +9,7 @@
 int main()
 {
 	// WORD_BITLEN 을 선택하게 하는 과정이 추가되어야 한다.
+	// hello world!
 
 
 	word arr[3] = { 0x1234, 0x5678, 0x9abc };
