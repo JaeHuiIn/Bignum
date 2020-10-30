@@ -405,41 +405,40 @@ void Left_Shift(bigint** x, int r)
 
 void Right_Shift(bigint** x, int r)
 {
-
-	bigint shifted_bi;  // 크기가 wordlen + Q + 1 인 bigint 구조체 생성
-	bigint* shifted_bi_pointer = &shifted_bi;
+	bigint* shifted_bi = NULL;  // 크기가 wordlen + Q + 1 인 bigint 구조체 생성
 
 	if (r >= WORD_BITLEN * (*x)->wordlen)       // r >= w * n : 모든 bigint = 0
 	{
-		bi_set_zero(&shifted_bi_pointer);
+		bi_new(&shifted_bi, 1);
+		bi_set_zero(&shifted_bi);
 	}
 	else
 	{
 		int Q = r / WORD_BITLEN;                // r = w * Q + R  (0 <= R < w)
 		int R = r % WORD_BITLEN;
 		int size = (*x)->wordlen - Q;
-		bi_new(&shifted_bi_pointer, (*x)->wordlen);
-		shifted_bi.sign = (*x)->sign;
+		bi_new(&shifted_bi, (*x)->wordlen);
+		shifted_bi->sign = (*x)->sign;
 
 		if (R == 0)     // r이 정확히 w의 배수일 때
 		{
 			for (int i = 0; i < size; i++)
 			{
-				shifted_bi.a[i] = (*x)->a[i + Q];
+				shifted_bi->a[i] = (*x)->a[i + Q];
 			}
 		}
 		else
 		{
 			for (int i = 0; i < size - 1; i++)
 			{
-				shifted_bi.a[i] = (((*x)->a[i + Q]) >> R) | (((*x)->a[i + Q + 1]) << (WORD_BITLEN - R));
+				shifted_bi->a[i] = (((*x)->a[i + Q]) >> R) | (((*x)->a[i + Q + 1]) << (WORD_BITLEN - R));
 			}
-			shifted_bi.a[size - 1] = (((*x)->a[(*x)->wordlen - 1]) >> R);
+			shifted_bi->a[size - 1] = (((*x)->a[(*x)->wordlen - 1]) >> R);
 		}
-		bi_refine(&shifted_bi);
+		bi_refine(shifted_bi);
 	}
 
-	bi_assign(x, &shifted_bi);
+	bi_assign(x, shifted_bi);
 }
 
 /* 2.11 Reduction */
