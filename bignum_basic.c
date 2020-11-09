@@ -1,42 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "bignum_basic.h"
 
-#define WORD_BITLEN 32
-
-#if WORD_BITLEN == 8
-typedef unsigned char word;
-#elif WORD_BITLEN == 32
-typedef unsigned int word;
-#elif WORD_BITLEN == 64
-typedef unsigned long long word;
-#endif 
-
-#define NON_NEGATIVE 0
-#define NEGATIVE 1
-
-#define word_modulo 2 << WORD_BITLEN -1
-
-/* Dynamic Memory Allocation */
-typedef struct {
-
-	int sign;       // NEGATIVE or NON-NEGATIVE
-	int wordlen;    // wordlen >= 0
-	word* a;        // address for big integer
-} bigint;
-
-
-/*
-// Static Memory Allocation
-typedef struct{
-
-	int sign;       // NEGATIVE or NON-NEGATIVE
-	int wordlen;    // wordlen >= 0
-	word a[MAX_WORD_LEN];        // address for big integer
-} bigint;
-*/
-
-#define ZERORIZE 0
 void array_init(word * a, int wordlen)
 {
 	for (int i = 0; i < wordlen; i++)
@@ -44,6 +7,7 @@ void array_init(word * a, int wordlen)
 		a[i] = 0x00;
 	}
 }
+
 /* 2.1 Create BigInt, Delete BigInt, Zeroize BigInt */
 void bi_delete(bigint** x)
 {
@@ -142,6 +106,7 @@ void bi_show(bigint* x, word base)
 				int temp = ((x->a[i]) >> j) & 0x01;
 				printf("%d", temp);
 			}
+			printf("\t");
 
 		} printf("\n");
 
@@ -182,6 +147,7 @@ void bi_refine(bigint* x)
 		x->sign = NON_NEGATIVE;
 
 }
+
 /* 2.4 Assign BigInt */
 void array_copy(word y[], word x[], int wordlen)    // 수정 필요
 {
@@ -225,7 +191,6 @@ void bi_gen_rand(bigint** x, int sign, int wordlen)
 	bi_refine(*x);
 }
 
-
 /* 2.6 Get Word Lengh / Bit Length / j-th Bit of BigInt */
 int get_wordlen(bigint* x)
 {
@@ -262,7 +227,6 @@ int get_jth_bit(bigint* x, int j)
 	}
 }
 
-
 /* 2.7 Get Sign and Flip Sign of BigInt */
 int bi_get_sign(bigint* x)
 {
@@ -276,7 +240,6 @@ void bi_flip_sign(bigint** x)
 	else
 		(*x)->sign = NEGATIVE;
 }
-
 
 /* 2.8 Set One, Set Zero, Is Zero, Is One */
 void bi_set_one(bigint** x)
@@ -366,8 +329,36 @@ int Compare_AB(bigint** A, bigint** B)
 /* 2.10 Left / Right Shift */
 void Left_Shift(bigint** x, int r)
 {
-	bigint* shifted_bi = NULL;  // 크기가 wordlen + Q + 1 인 bigint 구조체 생성
+	bigint* shifted_bi = NULL; //left_shifted된 수를 저장할 공간
 
+	int Q = r / WORD_BITLEN;  // 얼마나 앞에 더 공간이 필요한가
+	int R = r % WORD_BITLEN;  
+
+	bi_new(&shifted_bi, (*x)->wordlen + Q + 1);
+	array_init(shifted_bi->a, (*x)->wordlen + Q + 1); // 일단 0으로 다 채우기
+	shifted_bi->sign = (*x)->sign;
+
+	if (R == 0) // r이 WORD_BITLEN의 배수일 땐 그대로 옮겨지고 뒤에 0이 붙음
+	{
+		for (int i = (*x)->wordlen; i > 0; i--)
+		{
+			shifted_bi->a[i + Q - 1] = (*x)->a[i - 1];
+		}
+	}
+	else
+	{
+		shifted_bi->a[shifted_bi->wordlen - 1] = (*x)->a[(*x)->wordlen - 1] >> (WORD_BITLEN - R);
+		for (int i = (*x)->wordlen; i > 0; i--)
+		{
+			shifted_bi->a[i + Q - 1] = (((*x)->a[i - 1]) << R)| (((*x)->a[i-2]) >> (WORD_BITLEN - R));
+		}
+	}
+	bi_refine(shifted_bi);
+	bi_assign(x, shifted_bi);
+
+	/*
+	bigint* shifted_bi = NULL;  // 크기가 wordlen + Q + 1 인 bigint 구조체 생성
+	
 	if (r >= WORD_BITLEN * (*x)->wordlen)       // r >= w * n : 모든 bigint = 0
 	{
 		bi_new(&shifted_bi, 1);
@@ -399,7 +390,7 @@ void Left_Shift(bigint** x, int r)
 		}
 		bi_refine(shifted_bi);
 	}
-	bi_assign(x, shifted_bi);
+	bi_assign(x, shifted_bi);*/
 }
 
 
@@ -466,7 +457,7 @@ void Reduction(bigint** A, int r)
 
 			word a = 0x01;
 			a = a << R;        // 2^R 구현
-			(*A)->a[Q] = (*A)->a[Q] ^ (a - 1);
+			(*A)->a[Q] = (*A)->a[Q] & (a - 1);
 		}
 
 		bi_refine(*A);

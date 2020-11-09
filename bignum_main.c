@@ -1,27 +1,16 @@
 /**
  * Big Number Library
  * Developed by JangHyuck Choi & JaeHui In 
- * 2020-10-11
+ * 2020-11-02
  * */
-#include "1029big_num_header.h"
 
-/**
- * NEED TO IMPLEMENT
- * 2진수 bi_show 오류 수정 필요
- * WORD_BITLEN 선택 구현 필요
- * 10진수 bi_show 구현 필요     --> ADD, MUL 구현 이후 작성할 예정.
- * bi_gen_rand 함수 오류 수정 필요
- * j-th bit 와 bit len 출력값 검증 필요
- * bi_delete의 free((*x)->a); 부분에서 코드가 죽어버림. bi_delete를 쓰는 함수들은 주석처리함.
- * bi_rand, bi_show(10진수), LeftShift, RightShift, Reduction 은 주석처리됨.
-
-*/
-
+#include <time.h>
+#include "bignum_add_sub.c"
 
 int main()
 {
-	word arr[3] = { 0x1234, 0x5678, 0x9abc };
 	bigint* teemo = NULL;
+
 
 	printf("create big int\n");
 	bi_new(&teemo, 3);
@@ -114,22 +103,62 @@ int main()
 	printf("left shift\nbefore left shift: ");
 	bi_show(teemo4, 16);
 	printf("after shift 4 bit: ");
-	Left_Shift(&teemo4, 4);
+	Left_Shift(&teemo4, 3);
 	bi_show(teemo4, 16);
+	bi_show(teemo4, 2);
+	printf("\n");
 
 	printf("right shift\nbefore right shift: ");
-	bi_show(teemo4, 16);
+	bi_show(teemo3, 16);
 	printf("after shift 4 bit: ");
-	Right_Shift(&teemo4, 4);
-	bi_show(teemo4, 16);
+	Right_Shift(&teemo3, 24);
+	bi_show(teemo3, 16);
+	printf("\n");
 
 
 	printf("big int reduction\nbefore reduction: ");
-	Left_Shift(&teemo4, 4);
-	bi_show(teemo4, 16);
+	Left_Shift(&teemo3, 4);
+	bi_show(teemo3, 16);
 	printf("after reduction by 2^4: ");
-	Reduction(&teemo4, 4);
-	bi_show(teemo4, 16);
+	Reduction(&teemo3, 15);
+	bi_show(teemo3, 16);
+	printf("\n");
+	
+	
+
+	word arr1[2] = {0x11111111, 0x22222222};
+	word arr2[2] = {0x10000000, 0x11111111};
+	bigint* add_teemo1 = NULL;
+	bigint* add_teemo2 = NULL;
+	bigint* add_teemo3 = NULL;
+	bigint* sub_teemo1 = NULL;
+	bigint* sub_teemo2 = NULL;
+	bigint* sub_teemo3 = NULL;
+	bi_new(&add_teemo1, 2);
+	bi_new(&add_teemo2, 2);
+	bi_new(&sub_teemo1, 2);
+	bi_new(&sub_teemo2, 2);
+	bi_set_by_array(&add_teemo1, add_teemo1->sign, arr1, add_teemo1->wordlen);
+	bi_set_by_array(&add_teemo2, add_teemo2->sign, arr2, add_teemo2->wordlen);
+	bi_set_by_array(&sub_teemo1, sub_teemo1->sign, arr1, sub_teemo1->wordlen);
+	bi_set_by_array(&sub_teemo2, sub_teemo2->sign, arr2, sub_teemo2->wordlen);	
+	
+	printf("big int add\nA: ");	
+	bi_show(add_teemo1, 16);
+	printf("B: ");
+	bi_show(add_teemo2, 16);
+	bi_add(add_teemo1, add_teemo2, &add_teemo3);	
+	printf("A + B = ");
+	bi_show(add_teemo3, 16);
+	printf("\n");
+
+	printf("big int sub\nC: ");	
+	bi_show(sub_teemo1, 16);
+	printf("D: ");
+	bi_show(sub_teemo2, 16);
+	bi_sub(sub_teemo1, sub_teemo2, &sub_teemo3);	
+	printf("A - B = ");
+	bi_show(sub_teemo3, 16);
 
 	return 0;
 }
