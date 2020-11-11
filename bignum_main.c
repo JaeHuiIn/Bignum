@@ -5,12 +5,11 @@
  * */
 
 #include <time.h>
-#include "bignum_add_sub.c"
+#include "bignum_mul.c"
 
 int main()
 {
 	bigint* teemo = NULL;
-
 
 	printf("create big int\n");
 	bi_new(&teemo, 3);
@@ -29,7 +28,8 @@ int main()
 	bi_show(teemo, 16);
 	printf("\n");
 
-	// printf("bi_refine: \n");
+	printf("bi_refine: \n");
+
 
 	printf("Assign big int A <-- B \n");
 	printf("show big int B: ");
@@ -103,7 +103,7 @@ int main()
 	printf("left shift\nbefore left shift: ");
 	bi_show(teemo4, 16);
 	printf("after shift 4 bit: ");
-	Left_Shift(&teemo4, 3);
+	Left_Shift(&teemo4, 17);
 	bi_show(teemo4, 16);
 	bi_show(teemo4, 2);
 	printf("\n");
@@ -120,14 +120,14 @@ int main()
 	Left_Shift(&teemo3, 4);
 	bi_show(teemo3, 16);
 	printf("after reduction by 2^4: ");
-	Reduction(&teemo3, 15);
+	Reduction(&teemo3, 27);
 	bi_show(teemo3, 16);
 	printf("\n");
-	
-	
 
-	word arr1[2] = {0x11111111, 0x22222222};
-	word arr2[2] = {0x10000000, 0x11111111};
+
+
+	word arr1[2] = { 0x11111111, 0x22222222 };
+	word arr2[2] = { 0x10000000, 0x11111111 };
 	bigint* add_teemo1 = NULL;
 	bigint* add_teemo2 = NULL;
 	bigint* add_teemo3 = NULL;
@@ -141,24 +141,38 @@ int main()
 	bi_set_by_array(&add_teemo1, add_teemo1->sign, arr1, add_teemo1->wordlen);
 	bi_set_by_array(&add_teemo2, add_teemo2->sign, arr2, add_teemo2->wordlen);
 	bi_set_by_array(&sub_teemo1, sub_teemo1->sign, arr1, sub_teemo1->wordlen);
-	bi_set_by_array(&sub_teemo2, sub_teemo2->sign, arr2, sub_teemo2->wordlen);	
-	
-	printf("big int add\nA: ");	
+	bi_set_by_array(&sub_teemo2, sub_teemo2->sign, arr2, sub_teemo2->wordlen);
+
+	printf("big int add\nA: ");
 	bi_show(add_teemo1, 16);
 	printf("B: ");
 	bi_show(add_teemo2, 16);
-	bi_add(add_teemo1, add_teemo2, &add_teemo3);	
+	bi_add(add_teemo1, add_teemo2, &add_teemo3);
 	printf("A + B = ");
 	bi_show(add_teemo3, 16);
 	printf("\n");
 
-	printf("big int sub\nC: ");	
+	printf("big int sub\nC: ");
 	bi_show(sub_teemo1, 16);
 	printf("D: ");
 	bi_show(sub_teemo2, 16);
-	bi_sub(sub_teemo1, sub_teemo2, &sub_teemo3);	
+	bi_sub(sub_teemo1, sub_teemo2, &sub_teemo3);
 	printf("A - B = ");
 	bi_show(sub_teemo3, 16);
 
+	bigint* SP_mul_teemo = NULL;
+	bi_mulc(arr[0], arr[1], &SP_mul_teemo);
+	printf("x = %lu \ny = %lu \n", arr[0], arr[1]);
+	printf("mul(x,y) : ");
+	bi_show(SP_mul_teemo, 16);
+
+	bigint* mul_teemo = NULL;
+	bi_mul(teemo, teemo3, &mul_teemo);
+	printf("x = ");
+	bi_show(teemo, 16);
+	printf("\ny = ");
+	bi_show(teemo3, 16);
+	printf("\nx*y =");
+	bi_show(mul_teemo, 16);
 	return 0;
 }

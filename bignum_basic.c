@@ -117,10 +117,25 @@ void bi_show(bigint* x, word base)
 	}
 	else if (base == 16)
 	{
-		for (int i = x->wordlen - 1; i >= 0; i--)
-			printf("%x", x->a[i]);
-		printf("\n");
 
+		if (WORD_BITLEN == 8)
+		{
+			for (int i = x->wordlen - 1; i >= 0; i--)
+				printf("%02x", x->a[i]);
+			printf("\n");
+		}
+		else if (WORD_BITLEN == 32)
+		{
+			for (int i = x->wordlen - 1; i >= 0; i--)
+				printf("%08x", x->a[i]);
+			printf("\n");
+		}
+		else if(WORD_BITLEN == 64)
+		{
+			for (int i = x->wordlen - 1; i >= 0; i--)
+				printf("%16x", x->a[i]);
+			printf("\n");
+		}
 	}
 
 }
@@ -348,11 +363,13 @@ void Left_Shift(bigint** x, int r)
 	else
 	{
 		shifted_bi->a[shifted_bi->wordlen - 1] = (*x)->a[(*x)->wordlen - 1] >> (WORD_BITLEN - R);
-		for (int i = (*x)->wordlen; i > 0; i--)
+		for (int i = (*x)->wordlen; i > 1; i--)
 		{
-			shifted_bi->a[i + Q - 1] = (((*x)->a[i - 1]) << R)| (((*x)->a[i-2]) >> (WORD_BITLEN - R));
+			shifted_bi->a[i + Q - 1] = (((*x)->a[i - 1]) << R) | (((*x)->a[i-2]) >> (WORD_BITLEN - R));
 		}
+		shifted_bi->a[Q] = (((*x)->a[0]) << R);
 	}
+
 	bi_refine(shifted_bi);
 	bi_assign(x, shifted_bi);
 
