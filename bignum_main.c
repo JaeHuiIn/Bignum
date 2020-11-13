@@ -4,7 +4,6 @@
  * 2020-11-02
  * */
 
-#include <time.h>
 #include "bignum_mul.c"
 
 int main()
@@ -22,23 +21,24 @@ int main()
 	printf("show big int\n");
 	printf("show by base 2: ");
 	bi_show(teemo, 2);
+	printf("\n");
 	// printf("show by base 10: \n");   // ADD, MUL 구현 이후 제작할 예정
 	// bi_show(teemo, 10);
 	printf("show by base 16: ");
 	bi_show(teemo, 16);
-	printf("\n");
+	printf("\n\n");
 
-	printf("bi_refine: \n");
-
+	// printf("bi_refine: \n");
 
 	printf("Assign big int A <-- B \n");
 	printf("show big int B: ");
 	bi_show(teemo, 16);
+	printf("\n");
 	bigint* teemo2 = NULL;
 	bi_assign(&teemo2, teemo);
 	printf("show assigned big int A: ");
 	bi_show(teemo2, 16);
-	printf("\n");
+	printf("\n\n");
 
 	printf("get word length: ");
 	int wordlen = get_wordlen(teemo);
@@ -54,8 +54,9 @@ int main()
 	bigint* teemo3 = NULL;
 	bi_gen_rand(&teemo3, NON_NEGATIVE, 3); // wordlen 3인 양수의 랜덤 big int 생성
 	bi_show(teemo3, 2);
-	printf("\n");
+	printf("\n\n");
 	bi_show(teemo3, 16);
+	printf("\n\n");
 
 	printf("get j-th bit \n");
 	// printf("enter j: ");
@@ -75,10 +76,12 @@ int main()
 	bi_assign(&teemo4, teemo);
 	printf("before set one: ");
 	bi_show(teemo4, 16);
+	printf("\n\n");
 	printf("is big int one: %d\n", is_one(teemo4));
 	printf("after set one: ");
 	bi_set_one(&teemo4);
 	bi_show(teemo4, 16);
+	printf("\n\n");
 	printf("is big int one: %d\n\n", is_one(teemo4));
 
 	printf("big int set zero, is zero\n");
@@ -86,10 +89,12 @@ int main()
 	bi_assign(&teemo5, teemo4);
 	printf("before set zero: ");
 	bi_show(teemo5, 16);
+	printf("\n");
 	printf("is big int zero: %d\n", is_zero(teemo5));
 	printf("after set zero: ");
 	bi_set_zero(&teemo5);
 	bi_show(teemo5, 16);
+	printf("\n");
 	printf("is big int zero: %d\n\n", is_zero(teemo5));
 
 	printf("compare big int\n");
@@ -102,32 +107,34 @@ int main()
 
 	printf("left shift\nbefore left shift: ");
 	bi_show(teemo4, 16);
-	printf("after shift 4 bit: ");
-	Left_Shift(&teemo4, 17);
-	bi_show(teemo4, 16);
-	bi_show(teemo4, 2);
 	printf("\n");
+	printf("after shift 4 bit: ");
+	Left_Shift(&teemo4, 23);
+	bi_show(teemo4, 16);
+	printf("\n\n");
 
 	printf("right shift\nbefore right shift: ");
 	bi_show(teemo3, 16);
+	printf("\n");
 	printf("after shift 4 bit: ");
 	Right_Shift(&teemo3, 24);
 	bi_show(teemo3, 16);
-	printf("\n");
+	printf("\n\n");
 
 
 	printf("big int reduction\nbefore reduction: ");
 	Left_Shift(&teemo3, 4);
 	bi_show(teemo3, 16);
-	printf("after reduction by 2^4: ");
-	Reduction(&teemo3, 27);
-	bi_show(teemo3, 16);
 	printf("\n");
+	printf("after reduction by 2^4: ");
+	Reduction(&teemo3, 15);
+	bi_show(teemo3, 16);
+	printf("\n\n");
+	
+	
 
-
-
-	word arr1[2] = { 0x11111111, 0x22222222 };
-	word arr2[2] = { 0x10000000, 0x11111111 };
+	word arr1[2] = {0x11111111, 0x22222222};
+	word arr2[2] = {0x10000000, 0x11111111};
 	bigint* add_teemo1 = NULL;
 	bigint* add_teemo2 = NULL;
 	bigint* add_teemo3 = NULL;
@@ -141,38 +148,65 @@ int main()
 	bi_set_by_array(&add_teemo1, add_teemo1->sign, arr1, add_teemo1->wordlen);
 	bi_set_by_array(&add_teemo2, add_teemo2->sign, arr2, add_teemo2->wordlen);
 	bi_set_by_array(&sub_teemo1, sub_teemo1->sign, arr1, sub_teemo1->wordlen);
-	bi_set_by_array(&sub_teemo2, sub_teemo2->sign, arr2, sub_teemo2->wordlen);
-
-	printf("big int add\nA: ");
+	bi_set_by_array(&sub_teemo2, sub_teemo2->sign, arr2, sub_teemo2->wordlen);	
+	
+	printf("big int add\nA: ");	
 	bi_show(add_teemo1, 16);
+	printf("\n");
 	printf("B: ");
 	bi_show(add_teemo2, 16);
-	bi_add(add_teemo1, add_teemo2, &add_teemo3);
+	printf("\n");
+	bi_add(add_teemo1, add_teemo2, &add_teemo3);	
 	printf("A + B = ");
 	bi_show(add_teemo3, 16);
-	printf("\n");
+	printf("\n\n");
 
-	printf("big int sub\nC: ");
+	printf("big int sub\nC: ");	
 	bi_show(sub_teemo1, 16);
+	printf("\n");
 	printf("D: ");
 	bi_show(sub_teemo2, 16);
-	bi_sub(sub_teemo1, sub_teemo2, &sub_teemo3);
+	printf("\n");
+	bi_sub(sub_teemo1, sub_teemo2, &sub_teemo3);	
 	printf("A - B = ");
 	bi_show(sub_teemo3, 16);
+	printf("\n\n");
 
+	printf("#big int mul(single pricision)\n");
 	bigint* SP_mul_teemo = NULL;
 	bi_mulc(arr[0], arr[1], &SP_mul_teemo);
 	printf("x = %lu \ny = %lu \n", arr[0], arr[1]);
-	printf("mul(x,y) : ");
+	printf("print(x*y == 0x");
 	bi_show(SP_mul_teemo, 16);
+	printf(")\n\n");
 
+	printf("#big int mul(multi pricision, Schoolbook)\n");
 	bigint* mul_teemo = NULL;
+	bi_flip_sign(&teemo);
 	bi_mul(teemo, teemo3, &mul_teemo);
-	printf("x = ");
+	printf("x = 0x");
 	bi_show(teemo, 16);
-	printf("\ny = ");
+	printf("\n");
+	printf("y = 0x");
 	bi_show(teemo3, 16);
-	printf("\nx*y =");
+	printf("\n");
+	bi_mul(teemo, teemo3, &mul_teemo);
+	printf("print(x*y == 0x");
 	bi_show(mul_teemo, 16);
+	printf(")\n\n");
+
+	printf("#big int mul(multi pricision, Karatsuba)\n");
+	bigint* mul_K_teemo = NULL;
+	bi_kmul(teemo, teemo3, &mul_K_teemo);
+	printf("x = 0x");
+	bi_show(teemo, 16);
+	printf("\n");
+	printf("y = 0x");
+	bi_show(teemo3, 16);
+	printf("\n");
+	printf("print(x*y == 0x");
+	bi_show(mul_K_teemo, 16);
+	printf(")\n\n");
+
 	return 0;
 }

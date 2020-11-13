@@ -95,48 +95,45 @@ void bi_set_by_string(bigint** x, int sign, char* a, word base)   // bigint x <-
 // Show big int
 void bi_show(bigint* x, word base)
 {
-	if (x->sign == NEGATIVE) printf("-");
+   if (x->sign == NEGATIVE) printf("-");
 
-	if (base == 2)
-	{
-		for (int i = x->wordlen - 1; i >= 0; i--)
-		{
-			for (int j = WORD_BITLEN - 1; j >= 0; j--)
-			{
-				int temp = ((x->a[i]) >> j) & 0x01;
-				printf("%d", temp);
-			}
-			printf("\t");
+   if (base == 2)
+   {
+      for (int i = x->wordlen - 1; i >= 0; i--)
+      {
+         for (int j = WORD_BITLEN - 1; j >= 0; j--)
+         {
+            int temp = ((x->a[i]) >> j) & 0x01;
+            printf("%d", temp);
+         }
+         printf("\t");
 
-		} printf("\n");
+      } printf("\n");
 
-	}
-	else if (base == 10)
-	{
-		// NEED TO IMPLEMENT!!
-	}
-	else if (base == 16)
-	{
+   }
+   else if (base == 10)
+   {
+      // NEED TO IMPLEMENT!!
+   }
+   else if (base == 16)
+   {
 
-		if (WORD_BITLEN == 8)
-		{
-			for (int i = x->wordlen - 1; i >= 0; i--)
-				printf("%02x", x->a[i]);
-			printf("\n");
-		}
-		else if (WORD_BITLEN == 32)
-		{
-			for (int i = x->wordlen - 1; i >= 0; i--)
-				printf("%08x", x->a[i]);
-			printf("\n");
-		}
-		else if(WORD_BITLEN == 64)
-		{
-			for (int i = x->wordlen - 1; i >= 0; i--)
-				printf("%16x", x->a[i]);
-			printf("\n");
-		}
-	}
+      if (WORD_BITLEN == 8)
+      {
+         for (int i = x->wordlen - 1; i >= 0; i--)
+            printf("%02x", x->a[i]);
+      }
+      else if (WORD_BITLEN == 32)
+      {
+         for (int i = x->wordlen - 1; i >= 0; i--)
+            printf("%08x", x->a[i]);
+      }
+      else if(WORD_BITLEN == 64)
+      {
+         for (int i = x->wordlen - 1; i >= 0; i--)
+            printf("%16x", x->a[i]);
+      }
+   }
 
 }
 
@@ -206,6 +203,7 @@ void bi_gen_rand(bigint** x, int sign, int wordlen)
 	bi_refine(*x);
 }
 
+
 /* 2.6 Get Word Lengh / Bit Length / j-th Bit of BigInt */
 int get_wordlen(bigint* x)
 {
@@ -242,6 +240,7 @@ int get_jth_bit(bigint* x, int j)
 	}
 }
 
+
 /* 2.7 Get Sign and Flip Sign of BigInt */
 int bi_get_sign(bigint* x)
 {
@@ -255,6 +254,7 @@ void bi_flip_sign(bigint** x)
 	else
 		(*x)->sign = NEGATIVE;
 }
+
 
 /* 2.8 Set One, Set Zero, Is Zero, Is One */
 void bi_set_one(bigint** x)
@@ -344,70 +344,36 @@ int Compare_AB(bigint** A, bigint** B)
 /* 2.10 Left / Right Shift */
 void Left_Shift(bigint** x, int r)
 {
-	bigint* shifted_bi = NULL; //left_shifted된 수를 저장할 공간
+   bigint* shifted_bi = NULL; //left_shifted된 수를 저장할 공간
 
-	int Q = r / WORD_BITLEN;  // 얼마나 앞에 더 공간이 필요한가
-	int R = r % WORD_BITLEN;  
+   int Q = r / WORD_BITLEN;  // 얼마나 앞에 더 공간이 필요한가
+   int R = r % WORD_BITLEN;  
 
-	bi_new(&shifted_bi, (*x)->wordlen + Q + 1);
-	array_init(shifted_bi->a, (*x)->wordlen + Q + 1); // 일단 0으로 다 채우기
-	shifted_bi->sign = (*x)->sign;
+   bi_new(&shifted_bi, (*x)->wordlen + Q + 1);
+   array_init(shifted_bi->a, (*x)->wordlen + Q + 1); // 일단 0으로 다 채우기
+   shifted_bi->sign = (*x)->sign;
 
-	if (R == 0) // r이 WORD_BITLEN의 배수일 땐 그대로 옮겨지고 뒤에 0이 붙음
-	{
-		for (int i = (*x)->wordlen; i > 0; i--)
-		{
-			shifted_bi->a[i + Q - 1] = (*x)->a[i - 1];
-		}
-	}
-	else
-	{
-		shifted_bi->a[shifted_bi->wordlen - 1] = (*x)->a[(*x)->wordlen - 1] >> (WORD_BITLEN - R);
-		for (int i = (*x)->wordlen; i > 1; i--)
-		{
-			shifted_bi->a[i + Q - 1] = (((*x)->a[i - 1]) << R) | (((*x)->a[i-2]) >> (WORD_BITLEN - R));
-		}
-		shifted_bi->a[Q] = (((*x)->a[0]) << R);
-	}
+   if (R == 0) // r이 WORD_BITLEN의 배수일 땐 그대로 옮겨지고 뒤에 0이 붙음
+   {
+      for (int i = (*x)->wordlen; i > 0; i--)
+      {
+         shifted_bi->a[i + Q - 1] = (*x)->a[i - 1];
+      }
+   }
+   else
+   {
+      shifted_bi->a[shifted_bi->wordlen - 1] = (*x)->a[(*x)->wordlen - 1] >> (WORD_BITLEN - R);
+      for (int i = (*x)->wordlen; i > 1; i--)
+      {
+         shifted_bi->a[i + Q - 1] = (((*x)->a[i - 1]) << R) | (((*x)->a[i-2]) >> (WORD_BITLEN - R));
+      }
+      shifted_bi->a[Q] = (((*x)->a[0]) << R);
+   }
 
-	bi_refine(shifted_bi);
-	bi_assign(x, shifted_bi);
+   bi_refine(shifted_bi);
+   bi_assign(x, shifted_bi);
 
-	/*
-	bigint* shifted_bi = NULL;  // 크기가 wordlen + Q + 1 인 bigint 구조체 생성
-	
-	if (r >= WORD_BITLEN * (*x)->wordlen)       // r >= w * n : 모든 bigint = 0
-	{
-		bi_new(&shifted_bi, 1);
-		bi_set_zero(&shifted_bi);
-	}
-	else
-	{
-		int Q = r / WORD_BITLEN;                // r = w * Q + R  (0 <= R < w)
-		int R = r % WORD_BITLEN;
-		(*x)->wordlen = ((*x)->wordlen) + Q + 1;
-
-		bi_new(&shifted_bi, (*x)->wordlen);
-		shifted_bi->sign = (*x)->sign;
-
-		if (R == 0)     // r이 정확히 w의 배수일 때
-		{
-			for (int i = ((*x)->wordlen) - 1; i >= Q; i--)
-			{
-				shifted_bi->a[i] = (*x)->a[i - Q];
-			}
-		}
-		else
-		{
-			shifted_bi->a[(*x)->wordlen - 1] = ((*x)->a[(*x)->wordlen - Q - 1]) >> (WORD_BITLEN - R);
-			for (int i = shifted_bi->wordlen - 2; i >= Q; i--)
-			{
-				shifted_bi->a[i] = (((*x)->a[i - Q]) << R) | (((*x)->a[i - (Q + 1)]) >> (WORD_BITLEN - R));
-			}
-		}
-		bi_refine(shifted_bi);
-	}
-	bi_assign(x, shifted_bi);*/
+   
 }
 
 
@@ -445,7 +411,7 @@ void Right_Shift(bigint** x, int r)
 		}
 		bi_refine(shifted_bi);
 	}
-
+	
 	bi_assign(x, shifted_bi);
 }
 

@@ -3,3 +3,4 @@
 void bi_mulc(word x, word y, bigint** C);
 
 void bi_mul(bigint* x, bigint* y, bigint** C);
+void bi_kmul(bigint* x, bigint* y, bigint** C)

@@ -1,56 +1,155 @@
-#include "bignum_mul.h"
+#include "bignum_add_sub.c"
 
 void bi_mulc(word x, word y, bigint** C)
 {
-	//ÀÌ°Å word·Î ÇÑ°Å ´Ù bigint·Î »ı¼ºÇØ¼­ ¸¶Áö¸·¿¡ delete¸¦ ÇØ¾ßÇÏ³ª?
-	word R_x = x >> (WORD_BITLEN / 2);      // x¸¦ Àı¹İÀ¸·Î ³ª´« ¾Õ ÀÚ¸®
-	word L_x = x % (2 << (WORD_BITLEN / 2));// x¸¦ Àı¹İÀ¸·Î ³ª´« µŞ ÀÚ¸®
-	word R_y = y >> (WORD_BITLEN / 2);      // y¸¦ Àı¹İÀ¸·Î ³ª´« ¾Õ ÀÚ¸®
-	word L_y = y % (2 << (WORD_BITLEN / 2));  // y¸¦ Àı¹İÀ¸·Î ³ª´« µŞ ÀÚ¸®
-	word A1, A0, AA1, AA0;  //°è»êÇÑ °ÍÀ» ÀúÀåÇÒ °÷
-	word c = 0;
-	A1 = R_x * R_y; // ¾Õ ÀÚ¸®³¢¸® °ö
-	A0 = L_x * L_y; // µŞ ÀÚ¸®³¢¸® °ö
-	AA1 = ((R_x * L_y) + (L_x * R_y)) >> (WORD_BITLEN / 2); // ´ë°¢¼± °öÀÇ ¾ÕÀÚ¸®
-	AA0 = ((R_x * L_y) + (L_x * R_y)) << (WORD_BITLEN / 2); // ´ë°¢¼± °öÀÇ µŞÀÚ¸®
+   //ì´ê±° wordë¡œ í•œê±° ë‹¤ bigintë¡œ ìƒì„±í•´ì„œ ë§ˆì§€ë§‰ì— deleteë¥¼ í•´ì•¼í•˜ë‚˜? 
+   word R_x = x >> (WORD_BITLEN / 2);      // xë¥¼ ì ˆë°˜ìœ¼ë¡œ ë‚˜ëˆˆ ì• ìë¦¬
+   word L_x = x % (1 << (WORD_BITLEN / 2));// xë¥¼ ì ˆë°˜ìœ¼ë¡œ ë‚˜ëˆˆ ë’· ìë¦¬
+   word R_y = y >> (WORD_BITLEN / 2);      // yë¥¼ ì ˆë°˜ìœ¼ë¡œ ë‚˜ëˆˆ ì• ìë¦¬
+   word L_y = y % (1 << (WORD_BITLEN/2));  // yë¥¼ ì ˆë°˜ìœ¼ë¡œ ë‚˜ëˆˆ ë’· ìë¦¬
+   word A0, A1, AA, AA0, AA1;  //ê³„ì‚°í•œ ê²ƒì„ ì €ì¥í•  ê³³
+   word c = 0;
+   A1 = R_x * R_y; // ì• ìë¦¬ë¼ë¦¬ ê³±
+   A0 = L_x * L_y; // ë’· ìë¦¬ë¼ë¦¬ ê³±
+   AA = ((R_x * L_y) + (L_x * R_y)); // ëŒ€ê°ì„  ê³±ì˜ í•©
+   AA1 = AA >> (WORD_BITLEN / 2); // ëŒ€ê°ì„  ê³±ì˜ ì•ìë¦¬
+   AA0 = AA << (WORD_BITLEN / 2); // ëŒ€ê°ì„  ê³±ì˜ ë’·ìë¦¬
 
-	if (A0 > A0 + AA0)
-		c = 1;
+   // ë’·ìë¦¬ì—ì„œ carry ë°œìƒ
+   if (A0 > A0 + AA0)
+      c = 1;
 
-	if (A1 + AA1 + c == 0)
-	{
-		bi_new(C, 1);
-		(*C)->a[0] = A0 + AA0;
-	}
-	else
-	{
-		bi_new(C, 2);
-		(*C)->a[1] = A1 + AA1 + c;
-		(*C)->a[0] = A0 + AA0;
-	}
+   if (A1 + AA1 + c == 0)
+   {
+      bi_new(C, 1);
+      (*C)->a[0] = A0 + AA0;
+   }
+   else
+   {
+      bi_new(C, 2);
+      (*C)->a[1] = A1 + AA1 + c;
+      (*C)->a[0] = A0 + AA0;
+   }
 }
 
 void bi_mul(bigint* x, bigint* y, bigint** C)
 {
-	int max_len = x->wordlen + y->wordlen;  //CÀÇ ÃÖ´ë ±æÀÌ
-	bigint* C_word = NULL;
-	bi_new(C, max_len);   // max_len ±æÀÇ·Î »ı¼º 
-	bi_new(&C_word, 2);   // x->a[i] * y->a[j]¸¦ ÀúÀåÇØµÑ °ø°£
+	int max_len = x->wordlen + y->wordlen;  //Cì˜ ìµœëŒ€ ê¸¸ì´
+
+	bi_new(C, max_len);   // ê³±ì…ˆ ê²°ê³¼ë¥¼ ì €ì¥í•  Cë¥¼ max_len ê¸¸ì´ë¡œ ì´ˆê¸°í™”
+
+	bigint* C_word = NULL;  // singhle pricisionì„ ì €ì¥í•˜ëŠ” bigint êµ¬ì¡°ì²´
 
 	for (int i = 0; i < x->wordlen; i++)
 	{
 		for (int j = 0; j < y->wordlen; j++)
 		{
-			bi_mulc(x->a[i], y->a[j], &C_word);          // ÇÑ ¿öµå¾¿ °ö
-			Left_Shift(&C_word, WORD_BITLEN * (i + j));  // Á¦´ë·Î µÈ À§Ä¡·Î ¼³Á¤
-			(*C)->a[C_word->wordlen - 1] = (*C)->a[C_word->wordlen - 1] + C_word->a[C_word->wordlen - 1];  // µ¡¼À
+			bi_new(&C_word, 2);     // 2ê°œì˜ ì›Œë“œë¥¼ ì €ì¥í•  ìˆ˜ ìˆëŠ” ê³µê°„ í• ë‹¹.
+			bi_mulc(x->a[i], y->a[j], &C_word);          // í•œ ì›Œë“œì”© ê³±
+			Left_Shift(&C_word, WORD_BITLEN * (i + j));  // ì œëŒ€ë¡œ ëœ ìœ„ì¹˜ë¡œ ì„¤ì •
+
 			if (C_word->wordlen != 1)
-				(*C)->a[C_word->wordlen - 2] = (*C)->a[C_word->wordlen - 2] + C_word->a[C_word->wordlen - 2];  //µ¡¼À
+			{
+				if ((*C)->a[C_word->wordlen - 2] + C_word->a[C_word->wordlen - 2] < (*C)->a[C_word->wordlen - 2])
+				{
+					(*C)->a[C_word->wordlen - 1] += 1;
+				}
+				(*C)->a[C_word->wordlen - 2] = (*C)->a[C_word->wordlen - 2] + C_word->a[C_word->wordlen - 2];  //ë§ì…ˆ
+			}
+			if ((*C)->a[C_word->wordlen - 1] + C_word->a[C_word->wordlen - 1] < (*C)->a[C_word->wordlen - 1])
+			{
+				(*C)->a[C_word->wordlen] += 1;
+			}
+			(*C)->a[C_word->wordlen - 1] = (*C)->a[C_word->wordlen - 1] + C_word->a[C_word->wordlen - 1];  // ë§
+
 		}
 	}
-	if (x->sign == y->sign)         //ºÎÈ£ ¸ÂÃß±â
+
+	if (x->sign == y->sign)         //ë¶€í˜¸ ë§ì¶”ê¸°
 		(*C)->sign = NON_NEGATIVE;
 	else
 		(*C)->sign = NEGATIVE;
 	bi_delete(&C_word);
+}
+
+void bi_kmul(bigint* x, bigint* y, bigint** C)
+{
+	int flag = 1;
+	if (flag >= x->wordlen || flag >= y->wordlen)
+	{
+		bi_mul(x, y, C);
+		return;
+	}
+
+	int l;
+	if (x->wordlen > y->wordlen)
+		l = (x->wordlen + 1) >> 1;
+	else
+		l = (y->wordlen + 1) >> 1;
+
+	bigint* A0 = NULL;
+	bigint* A1 = NULL;
+	bigint* B0 = NULL;
+	bigint* B1 = NULL;
+	// bi_new(&A0, l); bi_new(&A1, l); bi_new(&B0, l); bi_new(&B1, l);
+	bi_assign(&A0, x);
+	bi_assign(&A1, x);
+	bi_assign(&B0, y);
+	bi_assign(&B1, y);
+
+	Left_Shift(&A1, WORD_BITLEN * l);
+	Reduction(&A0, WORD_BITLEN * l);
+	Left_Shift(&B1, WORD_BITLEN * l);
+	Reduction(&B0, WORD_BITLEN * l);
+
+	bigint* T1 = NULL;
+	bigint* T0 = NULL;
+	bi_new(&T1, 2 * l);
+	bi_new(&T0, 2 * l);
+	bi_kmul(A1, B1, &T1);
+	bi_kmul(A1, B1, &T0);
+
+	bigint* R = NULL;
+	bi_new(&R, 4 * l);
+	Left_Shift(&T1, 2 * l * WORD_BITLEN);
+	bi_add(T1, T0, &R);
+
+	bigint* S1 = NULL;
+	bigint* S0 = NULL;
+	bi_new(&S1, 2 * l);
+	bi_new(&S0, 2 * l);
+	bi_sub(A0, A1, &S1);
+	bi_sub(B1, B0, &S0);
+
+	bigint* S = NULL;
+	bi_new(&S, 2 * l);
+	int sign = S1->sign ^ S0->sign;
+	if (S1->sign == NEGATIVE)
+		bi_flip_sign(&S1);
+	if (S0->sign == NEGATIVE)
+		bi_flip_sign(&S1);
+	bi_kmul(S1, S0, &S);
+	S->sign = sign;      // ì´ê²Œ ë§ëŠ” í‘œí˜„??
+
+	bi_add(S, T1, &S);
+	bi_add(S, T0, &S);
+	Left_Shift(&S, WORD_BITLEN * l);
+
+	bi_add(R, S, &R);
+
+	bi_assign(C, R);  // ë§ëŠ” í‘œí˜„?
+	
+	bi_delete(&A0);
+	bi_delete(&A1);
+	bi_delete(&B0);
+	bi_delete(&B1);
+	bi_delete(&T0);
+	bi_delete(&T1);
+	bi_delete(&R);
+	bi_delete(&S0);
+	bi_delete(&S1);
+	bi_delete(&S);
+
+
+	// pesudo code ê°™ì´ êµ¬í˜„ì€ ì™„ë£Œ....
 }

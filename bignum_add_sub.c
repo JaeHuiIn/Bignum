@@ -25,8 +25,8 @@ void bi_add(bigint* x, bigint* y, bigint** C)
 
 	bi_new(C, max_len + 1);
 
-	int c = 0;
-	int c1 = 0;
+	word c = 0;
+	word c1 = 0;
 	for (int i = 0; i < min_len; i++)    // x + y 부분 실행
 	{
 		c1 = 0;
@@ -75,7 +75,7 @@ void bi_add(bigint* x, bigint* y, bigint** C)
 // bigint 뺄셈
 void bi_subc(bigint* x, bigint* y, bigint** C)  // x >= y > 0 에서 x - y
 {
-	int b = 0;
+	word b = 0;
 
 	for (int i = 0; i < y->wordlen; i++)
 	{
