@@ -92,7 +92,11 @@ void bi_subc(bigint* x, bigint* y, bigint** C)  // x >= y > 0 에서 x - y
 	}
 	for (int i = y->wordlen; i < x->wordlen; i++)
 	{
-		(*C)->a[i] = (x->a[i]);
+		(*C)->a[i] = (x->a[i] - b);
+		if (x->a[i] < b)
+			b = 1;
+		else
+			b = 0;
 	}
 }
 

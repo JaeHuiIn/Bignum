@@ -81,11 +81,10 @@ void bi_kmul(bigint* x, bigint* y, bigint** C)
 	}
 
 	int l;
-	if (x->wordlen > y->wordlen)
+	if(x->wordlen > y->wordlen)
 		l = (x->wordlen + 1) >> 1;
 	else
 		l = (y->wordlen + 1) >> 1;
-
 	bigint* A0 = NULL;
 	bigint* A1 = NULL;
 	bigint* B0 = NULL;
@@ -96,13 +95,14 @@ void bi_kmul(bigint* x, bigint* y, bigint** C)
 	bi_assign(&B0, y);
 	bi_assign(&B1, y);
 
-	Left_Shift(&A1, WORD_BITLEN * l);
+	Right_Shift(&A1, WORD_BITLEN * l);
 	Reduction(&A0, WORD_BITLEN * l);
-	Left_Shift(&B1, WORD_BITLEN * l);
+	Right_Shift(&B1, WORD_BITLEN * l);
 	Reduction(&B0, WORD_BITLEN * l);
 
 	bigint* T1 = NULL;
 	bigint* T0 = NULL;
+	bigint* Copy_T1 = NULL;
 	bi_new(&T1, 2 * l);
 	bi_new(&T0, 2 * l);
 	bi_kmul(A1, B1, &T1);
@@ -110,8 +110,10 @@ void bi_kmul(bigint* x, bigint* y, bigint** C)
 
 	bigint* R = NULL;
 	bi_new(&R, 4 * l);
+	bi_assign(&Copy_T1, T1);
 	Left_Shift(&T1, 2 * l * WORD_BITLEN);
 	bi_add(T1, T0, &R);
+
 
 	bigint* S1 = NULL;
 	bigint* S0 = NULL;
@@ -121,23 +123,112 @@ void bi_kmul(bigint* x, bigint* y, bigint** C)
 	bi_sub(B1, B0, &S0);
 
 	bigint* S = NULL;
+	bigint* Copy_S = NULL;
 	bi_new(&S, 2 * l);
-	int sign = S1->sign ^ S0->sign;
+	int S_sign = S1->sign ^ S0->sign;
 	if (S1->sign == NEGATIVE)
 		bi_flip_sign(&S1);
 	if (S0->sign == NEGATIVE)
 		bi_flip_sign(&S1);
 	bi_kmul(S1, S0, &S);
-	S->sign = sign;      // 이게 맞는 표현??
+	S->sign = S_sign;      // 이게 맞는 표현??
 
-	bi_add(S, T1, &S);
-	bi_add(S, T0, &S);
+
+	bi_assign(&Copy_S, S);
+	if (S->sign == Copy_T1->sign)
+	{
+		bi_add(S, Copy_T1, &Copy_S);
+		Copy_S->sign = S->sign;
+	}
+	else
+	{
+		if (S->sign = NEGATIVE)
+		{
+			if (Compare_ABS(S, Copy_T1) == 1)
+			{
+				bi_flip_sign(&S);
+				bi_sub(Copy_T1, S, &Copy_S);
+			}
+			else if (Compare_ABS(S, Copy_T1) == 0)
+			{
+				bi_set_zero(&Copy_S);
+			}
+			else
+			{
+				bi_flip_sign(&S);
+				bi_sub(Copy_T1, S, &Copy_S);
+			}
+		}
+		else
+		{
+			if (Compare_ABS(S, Copy_T1) == 1)
+			{
+				bi_flip_sign(&T1);
+				bi_sub(S, Copy_T1, &Copy_S);
+			}
+			else if (Compare_ABS(S, Copy_T1) == 0)
+			{
+				bi_set_zero(&Copy_S);
+			}
+			else
+			{
+				bi_flip_sign(&Copy_T1);
+				bi_sub(S, Copy_T1, &Copy_S);
+			}
+		}
+	}
+	if (Copy_S->sign == T0->sign)
+	{
+		bi_add(Copy_S, T0, &S);
+		S->sign = Copy_S->sign;
+	}
+	else
+	{
+		if (Copy_S->sign = NEGATIVE)
+		{
+			if (Compare_ABS(Copy_S, T0) == 1)
+			{
+				bi_flip_sign(&Copy_S);
+				bi_sub(T0, Copy_S, &S);
+			}
+			else if (Compare_ABS(Copy_S, T0) == 0)
+			{
+				bi_set_zero(&S);
+			}
+			else
+			{
+				bi_flip_sign(&Copy_S);
+				bi_sub(T0, Copy_S, &S);
+			}
+		}
+		else
+		{
+			if (Compare_ABS(Copy_S, T0) == 1)
+			{
+				bi_flip_sign(&T0);
+				bi_sub(Copy_S, T0, &S);
+			}
+			else if (Compare_ABS(Copy_S, T0) == 0)
+			{
+				bi_set_zero(&S);
+			}
+			else
+			{
+				bi_flip_sign(&T0);
+				bi_sub(Copy_S, T0, &S);
+			}
+		}
+	}
+
 	Left_Shift(&S, WORD_BITLEN * l);
+	bigint* Copy_R = NULL;
+	bi_assign(&Copy_R, R);
 
-	bi_add(R, S, &R);
 
+	bi_add(Copy_R, S, &R);
+	bi_refine(R);
 	bi_assign(C, R);  // 맞는 표현?
-	
+
 	bi_delete(&A0);
 	bi_delete(&A1);
 	bi_delete(&B0);
@@ -148,7 +239,7 @@ void bi_kmul(bigint* x, bigint* y, bigint** C)
 	bi_delete(&S0);
 	bi_delete(&S1);
 	bi_delete(&S);
-
-
+	bi_delete(&Copy_S);
+	bi_delete(&Copy_R);
 	// pesudo code 같이 구현은 완료....
 }
