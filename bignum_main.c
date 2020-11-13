@@ -175,7 +175,6 @@ int main()
 	printf("#big int mul(single pricision)\n");
 	bigint* SP_mul_teemo = NULL;
 	bi_mulc(arr[0], arr[1], &SP_mul_teemo);
-	printf("x = %lu \ny = %lu \n", arr[0], arr[1]);
 	printf("print(x*y == 0x");
 	bi_show(SP_mul_teemo, 16);
 	printf(")\n\n");
