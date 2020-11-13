@@ -207,5 +207,20 @@ int main()
 	bi_show(mul_K_teemo, 16);
 	printf(")\n\n");
 
+	bi_delete(&teemo);
+	bi_delete(&teemo2);
+	bi_delete(&teemo3);
+	bi_delete(&teemo4);
+	bi_delete(&teemo5);
+	bi_delete(&add_teemo1);
+	bi_delete(&add_teemo2);
+	bi_delete(&add_teemo3);
+	bi_delete(&sub_teemo1);
+	bi_delete(&sub_teemo2);
+	bi_delete(&sub_teemo3);
+	bi_delete(&SP_mul_teemo);
+	bi_delete(&mul_teemo);
+	bi_delete(&mul_K_teemo);
+
 	return 0;
 }

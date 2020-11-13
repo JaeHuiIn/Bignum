@@ -372,7 +372,7 @@ void Left_Shift(bigint** x, int r)
 
    bi_refine(shifted_bi);
    bi_assign(x, shifted_bi);
-
+   bi_delete(&shifted_bi);
    
 }
 
@@ -413,6 +413,7 @@ void Right_Shift(bigint** x, int r)
 	}
 	
 	bi_assign(x, shifted_bi);
+	bi_delete(&shifted_bi);
 }
 
 /* 2.11 Reduction */
