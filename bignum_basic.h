@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define WORD_BITLEN 32
 
@@ -28,7 +29,7 @@ typedef struct {
 	word* a;        // address for big integer
 } bigint;
 
-void array_init(word * a, int wordlen);
+void array_init(word* a, int wordlen);
 
 /* 2.1 Create BigInt, Delete BigInt, Zeroize BigInt */
 void bi_delete(bigint** x);

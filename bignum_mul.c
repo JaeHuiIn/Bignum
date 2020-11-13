@@ -34,11 +34,13 @@ void bi_mulc(word x, word y, bigint** C)
 
 void bi_mul(bigint* x, bigint* y, bigint** C)
 {
+	bigint* C_word = NULL;  // singhle pricision을 저장하는 bigint 구조체
+	bigint* Copy_C = NULL;
+
 	int max_len = x->wordlen + y->wordlen;  //C의 최대 길이
 
-	bi_new(C, max_len);   // 곱셈 결과를 저장할 C를 max_len 길이로 초기화
-
-	bigint* C_word = NULL;  // singhle pricision을 저장하는 bigint 구조체
+	bi_new(&Copy_C, max_len);   // 곱셈 결과를 저장할 C를 max_len 길이로 초기화
+	
 
 	for (int i = 0; i < x->wordlen; i++)
 	{
@@ -50,26 +52,30 @@ void bi_mul(bigint* x, bigint* y, bigint** C)
 
 			if (C_word->wordlen != 1)
 			{
-				if ((*C)->a[C_word->wordlen - 2] + C_word->a[C_word->wordlen - 2] < (*C)->a[C_word->wordlen - 2])
+				if (Copy_C->a[C_word->wordlen - 2] + C_word->a[C_word->wordlen - 2] < Copy_C->a[C_word->wordlen - 2])
 				{
-					(*C)->a[C_word->wordlen - 1] += 1;
+					Copy_C->a[C_word->wordlen - 1] += 1;
 				}
-				(*C)->a[C_word->wordlen - 2] = (*C)->a[C_word->wordlen - 2] + C_word->a[C_word->wordlen - 2];  //덧셈
+				Copy_C->a[C_word->wordlen - 2] = Copy_C->a[C_word->wordlen - 2] + C_word->a[C_word->wordlen - 2];  //덧셈
 			}
-			if ((*C)->a[C_word->wordlen - 1] + C_word->a[C_word->wordlen - 1] < (*C)->a[C_word->wordlen - 1])
+			if (Copy_C->a[C_word->wordlen - 1] + C_word->a[C_word->wordlen - 1] < Copy_C->a[C_word->wordlen - 1])
 			{
-				(*C)->a[C_word->wordlen] += 1;
+				Copy_C->a[C_word->wordlen] += 1;
 			}
-			(*C)->a[C_word->wordlen - 1] = (*C)->a[C_word->wordlen - 1] + C_word->a[C_word->wordlen - 1];  // 덧
+			Copy_C->a[C_word->wordlen - 1] = Copy_C->a[C_word->wordlen - 1] + C_word->a[C_word->wordlen - 1];  // 덧
 
 		}
 	}
 
 	if (x->sign == y->sign)         //부호 맞추기
-		(*C)->sign = NON_NEGATIVE;
+		Copy_C->sign = NON_NEGATIVE;
 	else
-		(*C)->sign = NEGATIVE;
+		Copy_C->sign = NEGATIVE;
+	bi_refine(Copy_C);
+	bi_assign(C, Copy_C);
+
 	bi_delete(&C_word);
+	bi_delete(&Copy_C);
 }
 
 void bi_kmul(bigint* x, bigint* y, bigint** C)
