@@ -3,13 +3,12 @@
  * Developed by JangHyuck Choi & JaeHui In
  * 2020-11-13
  * */
-
 #include "bignum_mul.c"
 
 int main()
 {
 	srand((unsigned)time(NULL));
-	int test_num = 0;
+	
 	bigint* teemo = NULL;
 
 	printf("\n\n\n#create big int\n");
@@ -146,8 +145,8 @@ int main()
 	printf("reduction = %d\n", reduction);
 	printf("print(x%%2**reduction == y )");
 	printf("\n\n");
-
-	for (int i = 0; i < 100; i++)
+	
+	for (int i = 0; i < 50; i++)
 	{
 		bigint* r0 = NULL;
 		bigint* r1 = NULL;
@@ -178,14 +177,14 @@ int main()
 
 			while (1)
 			{
-				r = rand() % 7;
+				r = rand() % 6;
 				s = rand() % 2;
 				if (r >= 5)
 					break;
 			}
 
 			random[i] = r;
-			sign[i] = 0;
+			sign[i] = s;
 		}
 		bi_gen_rand(&r0, sign[0], random[0]);
 		bi_gen_rand(&r1, sign[1], random[1]);
@@ -197,9 +196,10 @@ int main()
 		bi_gen_rand(&r7, sign[7], random[7]);
 		bi_gen_rand(&r8, sign[8], random[8]);
 		bi_gen_rand(&r9, sign[9], random[9]);
-		/*
+		
 		printf("# bigint add \n");
 		printf("print(\"add test\")\n");
+		int test_num = 0;
 
 		printf("# add test %d\n", test_num);
 		printf("x = 0x");
@@ -240,8 +240,9 @@ int main()
 		printf(")\n\n");
 		test_num = 0;
 
+
 		///// add test end
-		*/
+
 		printf("# big int sub\n");
 		printf("print(\"sub test\")\n");
 
@@ -252,8 +253,8 @@ int main()
 		printf("y = 0x");
 		bi_show(r4, 16);
 		printf("\n");
-		bi_sub(r3, r4, &t3);
-		printf("print(x - y == 0x");
+		bi_add(r3, r4, &t3);
+		printf("print(x + y == 0x");
 		bi_show(t3, 16);
 		printf(")\n\n");
 		test_num += 1;
@@ -265,8 +266,8 @@ int main()
 		printf("y = 0x");
 		bi_show(r5, 16);
 		printf("\n");
-		bi_sub(r4, r5, &t4);
-		printf("print(x - y == 0x");
+		bi_add(r4, r5, &t4);
+		printf("print(x + y == 0x");
 		bi_show(t4, 16);
 		printf(")\n\n");
 		test_num += 1;
@@ -278,14 +279,14 @@ int main()
 		printf("y = 0x");
 		bi_show(r6, 16);
 		printf("\n");
-		bi_sub(r5, r6, &t5);
-		printf("print(x - y == 0x");
+		bi_add(r5, r6, &t5);
+		printf("print(x + y == 0x");
 		bi_show(t5, 16);
 		printf(")\n\n");
 		test_num += 1;
 
 		///// sub test end
-		/*
+
 		printf("# mul test\n");
 		printf("# single pricision test\n");
 		printf("print(\"single pricision mul test\")\n");
@@ -308,8 +309,9 @@ int main()
 		printf("print(x * y == 0x");
 		bi_show(t7, 16);
 		printf(")\n\n");
-
+		
 		printf("# multi pricision test (Kartusba)\n");
+
 		printf("print(\"multi pricison Karatsuba mul test\")\n");
 		bi_kmul(r7, r8, &t8);
 		printf("x = 0x");
@@ -333,36 +335,34 @@ int main()
 		printf("print(x * y == 0x");
 		bi_show(t9, 16);
 		printf(")\n\n");
-
-
-		*/
-		bi_delete(&teemo);
-		bi_delete(&teemo2);
-		bi_delete(&teemo3);
-		bi_delete(&teemo4);
-		bi_delete(&teemo5);
-		bi_delete(&r0);
-		bi_delete(&r1);
-		bi_delete(&r2);
-		bi_delete(&r3);
-		bi_delete(&r4);
-		bi_delete(&r5);
-		bi_delete(&r6);
-		bi_delete(&r7);
-		bi_delete(&r8);
-		bi_delete(&r9);
-		bi_delete(&t0);
-		bi_delete(&t1);
-		bi_delete(&t2);
-		bi_delete(&t3);
-		bi_delete(&t4);
-		bi_delete(&t5);
-		bi_delete(&t6);
-		bi_delete(&t7);
-		bi_delete(&t8);
-		bi_delete(&t9);
 	}
 
+	bi_delete(&teemo);
+	bi_delete(&teemo2);
+	bi_delete(&teemo3);
+	bi_delete(&teemo4);
+	bi_delete(&teemo5);
+	bi_delete(&r0);
+	bi_delete(&r1);
+	bi_delete(&r2);
+	bi_delete(&r3);
+	bi_delete(&r4);
+	bi_delete(&r5);
+	bi_delete(&r6);
+	bi_delete(&r7);
+	bi_delete(&r8);
+	bi_delete(&r9);
+	bi_delete(&t0);
+	bi_delete(&t1);
+	bi_delete(&t2);
+	bi_delete(&t3);
+	bi_delete(&t4);
+	bi_delete(&t5);
+	bi_delete(&t6);
+	bi_delete(&t7);
+	bi_delete(&t8);
+	bi_delete(&t9);
+	
 
 	return 0;
 }

@@ -117,7 +117,6 @@ void bi_show(bigint* x, word base)
 	}
 	else if (base == 16)
 	{
-
 		if (WORD_BITLEN == 8)
 		{
 			for (int i = x->wordlen - 1; i >= 0; i--)
