@@ -7,14 +7,18 @@
 
 #if WORD_BITLEN == 8
 typedef unsigned char word;
+#define WORD_MASK 0xff; 
 word arr[3] = { 0x12, 0x34, 0x56 };
 #elif WORD_BITLEN == 32
 typedef unsigned int word;
+#define WORD_MASK 0xffffffff; 
 word arr[3] = { 0x12345678, 0x9abc0123, 0x456789ab };
 #elif WORD_BITLEN == 64
 typedef unsigned long long word;
-word arr[3] = { 0x123456789abcdef, 0x9abcedf012345678, 0xdef0123456789abc };
+#define WORD_MASK 0xffffffffffffffff; 
+word arr[3] = { 0x0123456789abcdef, 0x9abcedf012345678, 0xdef0123456789abc };
 #endif 
+
 
 #define NON_NEGATIVE 0
 #define NEGATIVE 1

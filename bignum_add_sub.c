@@ -87,6 +87,14 @@ void bi_add(bigint* x, bigint* y, bigint** C)
 		(*C)->sign = NEGATIVE;
 }
 
+void bi_self_add(bigint** x, bigint* y)
+{
+	bigint* Copy_x = NULL;
+	bi_assign(&Copy_x, *x);
+	bi_add(Copy_x, y, x);
+	bi_delete(&Copy_x);
+}
+
 // bigint 뺄셈
 void bi_subc(bigint* x, bigint* y, bigint** C)  // x >= y > 0 에서 x - y
 {

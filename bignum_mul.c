@@ -3,7 +3,7 @@
 void bi_mulc(word x, word y, bigint** C)
 {
    //이거 word로 한거 다 bigint로 생성해서 마지막에 delete를 해야하나? 
-	word crr = 0;
+   word crr = 0;
    word R_x = x >> (WORD_BITLEN / 2);      // x를 절반으로 나눈 앞 자리
    word L_x = x % (1 << (WORD_BITLEN / 2));// x를 절반으로 나눈 뒷 자리
    word R_y = y >> (WORD_BITLEN / 2);      // y를 절반으로 나눈 앞 자리
@@ -73,12 +73,14 @@ void bi_mul(bigint* x, bigint* y, bigint** C)
 
 void bi_kmul(bigint* x, bigint* y, bigint** C)
 {
+	// printf("test\n");
 	int flag = 4;
 	if (flag >= x->wordlen || flag >= y->wordlen)
 	{
 		bi_mul(x, y, C);
 		return;
 	}
+	// printf("test\n");
 
 	int l;
 	if(x->wordlen > y->wordlen)
@@ -170,6 +172,157 @@ void bi_kmul(bigint* x, bigint* y, bigint** C)
 	bi_delete(&S);
 	bi_delete(&Copy_S);
 	bi_delete(&Copy_SS);
+	bi_delete(&Copy_T1);
 	bi_delete(&Copy_R);
 	// pesudo code 같이 구현은 완료....
+}
+
+void bi_kmulc(bigint* x, bigint* y, bigint** C)
+{
+	int sign = 0;
+	bigint* TEMP = NULL;
+
+	if(x->sign != y->sign)
+		sign = NEGATIVE;
+	else
+		sign = NON_NEGATIVE;
+	
+
+	x->sign = NON_NEGATIVE;
+	y->sign = NON_NEGATIVE;
+	bi_kmul(x, y, &TEMP);
+
+	bi_assign(C, TEMP);
+	if(sign == NEGATIVE)
+		if((*C)->sign == NON_NEGATIVE)
+			bi_flip_sign(C);
+	else
+		if((*C)->sign == NEGATIVE)
+			bi_flip_sign(C);
+	
+	bi_delete(&TEMP);
+}
+
+void bi_squaringC(word x, bigint** C)
+{
+	bigint* Copy_C = NULL;
+	word c = 0;
+	word A1 = x >> (WORD_BITLEN / 2);        // x를 절반으로 나눈 앞 자리
+	word A0 = x % (1 << (WORD_BITLEN / 2));  // x를 절반으로 나눈 뒷 자리
+	word C1 = A1 * A1;                       // 앞 자리끼리 곱
+	word C0 = A0 * A0;                       // 뒷 자리끼리 곱
+	word AA = A1 * A0;
+	word T1 = AA >> ((WORD_BITLEN / 2) - 1);
+	word T0 = AA << ((WORD_BITLEN / 2) + 1);
+
+	if (C0 > C0 + T0)
+		c = 1;
+
+	bi_new(&Copy_C, 2);
+	Copy_C->a[1] = C1 + T1 + c;
+	Copy_C->a[0] = C0 + T0;
+	bi_refine(Copy_C);
+	bi_assign(C, Copy_C);
+	bi_delete(&Copy_C);
+}
+
+void bi_squaring(bigint* x, bigint** C)
+{
+	int i, j;
+	bigint* C1 = NULL;
+	bigint* C2 = NULL;
+	bigint* T1 = NULL;
+	bigint* T2 = NULL;
+
+	bi_new(&C1, 2 * (x->wordlen));
+	bi_new(&C2, 2 * (x->wordlen));
+	bi_new(&T1, 2);
+	bi_new(&T2, 2);
+
+	for (j = 0; j < x->wordlen; j++)
+	{
+		bi_squaringC(x->a[j], &T1);
+		Left_Shift(&T1, (2 * j)*WORD_BITLEN);
+		bi_self_add(&C1, T1);
+		if (j != (x->wordlen) - 1)
+		{
+			for (i = j + 1; i < x->wordlen; i++)
+			{
+				bi_mulc(x->a[j], x->a[i], &T2);
+				Left_Shift(&T2, (i + j) * WORD_BITLEN);
+				bi_self_add(&C2, T2);
+			}
+		}
+	}
+	Left_Shift(&C2, 1);
+	bi_refine(C1);
+	bi_refine(C2);
+	bi_add(C1, C2, C);
+	(*C)->sign = NON_NEGATIVE;
+
+	bi_delete(&C1);
+	bi_delete(&C2);
+	bi_delete(&T1);
+	bi_delete(&T2);
+}
+
+void bi_ksquaring(bigint* x, bigint** C)
+{
+	if (x->sign == NEGATIVE)
+		bi_flip_sign(&x);
+
+	int flag = 4;
+	if (flag >= x->wordlen)
+	{
+		bi_squaring(x, C);
+		return;
+	}
+
+	int l = (x->wordlen + 1) >> 1;
+	int lw = l * WORD_BITLEN;
+	bigint* A0 = NULL;
+	bigint* A1 = NULL;
+	bigint* Copy_A0 = NULL;
+	bigint* Copy_A1 = NULL;
+	bi_assign(&A0, x);
+	bi_assign(&A1, x);
+
+	Right_Shift(&A1, lw);
+	Reduction(&A0, lw);
+
+	bi_assign(&Copy_A1, A1);
+	bi_assign(&Copy_A0, A0);
+
+	bigint* T1 = NULL;
+	bigint* T0 = NULL;
+	bi_new(&T1, 2 * l);
+	bi_new(&T0, 2 * l);
+
+	bi_ksquaring(A1, &T1);
+	bi_ksquaring(A0, &T0);
+
+	bigint* R = NULL;
+	bi_new(&R, 4 * l);
+	Left_Shift(&T1, 2 * lw);
+	bi_add(T1, T0, &R);
+
+	bigint* S = NULL;
+	bi_new(&S, 2 * l);
+	bi_kmul(Copy_A1, Copy_A0, &S);
+	Left_Shift(&S, lw + 1);
+
+	bi_self_add(&R, S);
+
+	bi_refine(R);
+	bi_assign(C, R);
+
+	bi_delete(&A1);
+	bi_delete(&A0);
+	bi_delete(&Copy_A1);
+	bi_delete(&Copy_A0);
+	bi_delete(&T1);
+	bi_delete(&T0);
+	bi_delete(&S);
+	bi_delete(&R);
+
 }
