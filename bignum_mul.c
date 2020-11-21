@@ -2,39 +2,40 @@
 
 void bi_mulc(word x, word y, bigint** C)
 {
-   //이거 word로 한거 다 bigint로 생성해서 마지막에 delete를 해야하나? 
-   word crr = 0;
-   word R_x = x >> (WORD_BITLEN / 2);      // x를 절반으로 나눈 앞 자리
-   word L_x = x % (1 << (WORD_BITLEN / 2));// x를 절반으로 나눈 뒷 자리
-   word R_y = y >> (WORD_BITLEN / 2);      // y를 절반으로 나눈 앞 자리
-   word L_y = y % (1 << (WORD_BITLEN/2));  // y를 절반으로 나눈 뒷 자리
-   word A0, A1, AA, AA0, AA1;  //계산한 것을 저장할 곳
-   word c = 0;
-   A1 = R_x * R_y; // 앞 자리끼리 곱
-   A0 = L_x * L_y; // 뒷 자리끼리 곱
-   AA = ((R_x * L_y) + (L_x * R_y)); // 대각선 곱의 합
-   if (AA < (R_x * L_y))
-   {
-	   crr = 1;
-   }
-   AA1 = AA >> (WORD_BITLEN / 2); // 대각선 곱의 앞자리
-   AA0 = AA << (WORD_BITLEN / 2); // 대각선 곱의 뒷자리
-   AA1 += crr << (WORD_BITLEN / 2);
-   // 뒷자리에서 carry 발생
-   if (A0 > A0 + AA0)
-      c = 1;
+	word crr = 0;
+   	word R_x = x >> (WORD_BITLEN / 2);      // x를 절반으로 나눈 앞 자리
+   	word L_x = x % (1 << (WORD_BITLEN / 2));// x를 절반으로 나눈 뒷 자리
+   	word R_y = y >> (WORD_BITLEN / 2);      // y를 절반으로 나눈 앞 자리
+   	word L_y = y % (1 << (WORD_BITLEN/2));  // y를 절반으로 나눈 뒷 자리
+   	word A0, A1, AA, AA0, AA1, AAA;  //계산한 것을 저장할 곳
+   	word c = 0;
+   	A1 = R_x * R_y; // 앞 자리끼리 곱
+   	A0 = L_x * L_y; // 뒷 자리끼리 곱
+   	AA = ((R_x * L_y) + (L_x * R_y)); // 대각선 곱의 합
+   	if (AA < (R_x * L_y))
+   	{
+	  crr = 1;
+   	}
+   	AA1 = AA >> (WORD_BITLEN / 2); // 대각선 곱의 앞자리
+   	AA0 = AA << (WORD_BITLEN / 2); // 대각선 곱의 뒷자리
+   	AA1 += crr << (WORD_BITLEN / 2);
+   	// 뒷자리에서 carry 발생
+	AAA = A0 + AA0;
+	if (A0 > AAA)
+		c = 1;
 
-   if (A1 + AA1 + c == 0)
-   {
-      bi_new(C, 1);
-      (*C)->a[0] = A0 + AA0;
-   }
-   else
-   {
-      bi_new(C, 2);
-      (*C)->a[1] = A1 + AA1 + c;
-      (*C)->a[0] = A0 + AA0;
-   }
+
+	if (A1 + AA1 + c == 0)
+   	{
+   	   bi_new(C, 1);
+       (*C)->a[0] = A0 + AA0;
+    }
+    else
+    {
+       bi_new(C, 2);
+       (*C)->a[1] = A1 + AA1 + c;
+       (*C)->a[0] = A0 + AA0;
+    }
 }
 
 void bi_mul(bigint* x, bigint* y, bigint** C)
@@ -44,7 +45,7 @@ void bi_mul(bigint* x, bigint* y, bigint** C)
 	bigint* add_C = NULL;
 
 	int max_len = x->wordlen + y->wordlen;  //C의 최대 길이
-
+	
 	bi_new(&Copy_C, max_len);   // 곱셈 결과를 저장할 C를 max_len 길이로 초기화
 	bi_new(&add_C, max_len);
 	for (int i = 0; i < x->wordlen; i++)
@@ -58,7 +59,6 @@ void bi_mul(bigint* x, bigint* y, bigint** C)
 			bi_assign(&add_C, Copy_C);
 		}
 	}
-
 	if (x->sign == y->sign)         //부호 맞추기
 		Copy_C->sign = NON_NEGATIVE;
 	else
@@ -71,13 +71,14 @@ void bi_mul(bigint* x, bigint* y, bigint** C)
 	bi_delete(&Copy_C);
 }
 
-void bi_kmul(bigint* x, bigint* y, bigint** C)
+void bi_kmul(bigint* x, bigint* y, bigint** C, int flag)
 {
 	// printf("test\n");
-	int flag = 4;
+	// int flag = 10;
 	if (flag >= x->wordlen || flag >= y->wordlen)
 	{
 		bi_mul(x, y, C);
+
 		return;
 	}
 	// printf("test\n");
@@ -109,9 +110,9 @@ void bi_kmul(bigint* x, bigint* y, bigint** C)
 	bigint* T0 = NULL;
 	bi_new(&T1, 2 * l);
 	bi_new(&T0, 2 * l);
-	bi_kmul(A1, B1, &T1);
+	bi_kmul(A1, B1, &T1, flag);
 	// printf("\nprint(0x"); bi_show(A1, 16); printf(" * 0x"); bi_show(B1, 16); printf(" == 0x"); bi_show(T1, 16); printf(")\n");
-	bi_kmul(A0, B0, &T0);
+	bi_kmul(A0, B0, &T0, flag);
 	// printf("\nprint(0x"); bi_show(A0, 16); printf(" * 0x"); bi_show(B0, 16); printf(" == 0x"); bi_show(T0, 16); printf(")\n");
 
 	bigint* R = NULL;
@@ -138,7 +139,9 @@ void bi_kmul(bigint* x, bigint* y, bigint** C)
 		bi_flip_sign(&S1);
 	if (S0->sign == NEGATIVE)
 		bi_flip_sign(&S0);
-	bi_kmul(S1, S0, &S);
+
+
+	bi_kmul(S1, S0, &S, flag);
 	// printf("\nprint(0x"); bi_show(S1, 16); printf(" * 0x"); bi_show(S0, 16); printf(" == 0x"); bi_show(S, 16); printf(")\n");
 	S->sign = S_sign;
 
@@ -158,7 +161,7 @@ void bi_kmul(bigint* x, bigint* y, bigint** C)
 	bi_assign(&Copy_R, R);
 	bi_add(Copy_R, S, &R);
 	bi_refine(R);
-	bi_assign(C, R);  // 맞는 표현?
+	bi_assign(C, R); 
 
 	bi_delete(&A0);
 	bi_delete(&A1);
@@ -170,11 +173,10 @@ void bi_kmul(bigint* x, bigint* y, bigint** C)
 	bi_delete(&S0);
 	bi_delete(&S1);
 	bi_delete(&S);
+	bi_delete(&Copy_T1);
 	bi_delete(&Copy_S);
 	bi_delete(&Copy_SS);
-	bi_delete(&Copy_T1);
 	bi_delete(&Copy_R);
-	// pesudo code 같이 구현은 완료....
 }
 
 void bi_kmulc(bigint* x, bigint* y, bigint** C)
@@ -190,7 +192,13 @@ void bi_kmulc(bigint* x, bigint* y, bigint** C)
 
 	x->sign = NON_NEGATIVE;
 	y->sign = NON_NEGATIVE;
-	bi_kmul(x, y, &TEMP);
+
+	int flag = x->wordlen;
+	if(flag > y->wordlen)
+		flag = y->wordlen;
+
+	flag = flag / 2;
+	bi_kmul(x, y, &TEMP, flag);
 
 	bi_assign(C, TEMP);
 	if(sign == NEGATIVE)
@@ -200,6 +208,7 @@ void bi_kmulc(bigint* x, bigint* y, bigint** C)
 		if((*C)->sign == NEGATIVE)
 			bi_flip_sign(C);
 	
+
 	bi_delete(&TEMP);
 }
 
@@ -308,7 +317,7 @@ void bi_ksquaring(bigint* x, bigint** C)
 
 	bigint* S = NULL;
 	bi_new(&S, 2 * l);
-	bi_kmul(Copy_A1, Copy_A0, &S);
+	bi_kmulc(Copy_A1, Copy_A0, &S);
 	Left_Shift(&S, lw + 1);
 
 	bi_self_add(&R, S);
@@ -326,3 +335,7 @@ void bi_ksquaring(bigint* x, bigint** C)
 	bi_delete(&R);
 
 }
+
+
+
+
