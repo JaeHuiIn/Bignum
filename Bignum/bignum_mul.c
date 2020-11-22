@@ -215,6 +215,7 @@ void bi_kmulc(bigint* x, bigint* y, bigint** C)
 void bi_squaringC(word x, bigint** C)
 {
 	bigint* Copy_C = NULL;
+	word CT;
 	word c = 0;
 	word A1 = x >> (WORD_BITLEN / 2);        // x를 절반으로 나눈 앞 자리
 	word A0 = x % (1 << (WORD_BITLEN / 2));  // x를 절반으로 나눈 뒷 자리
@@ -223,8 +224,8 @@ void bi_squaringC(word x, bigint** C)
 	word AA = A1 * A0;
 	word T1 = AA >> ((WORD_BITLEN / 2) - 1);
 	word T0 = AA << ((WORD_BITLEN / 2) + 1);
-
-	if (C0 > C0 + T0)
+	CT = C0 + T0;
+	if (C0 > CT)
 		c = 1;
 
 	bi_new(&Copy_C, 2);
@@ -275,12 +276,8 @@ void bi_squaring(bigint* x, bigint** C)
 	bi_delete(&T2);
 }
 
-void bi_ksquaring(bigint* x, bigint** C)
+void bi_ksquaring(bigint* x, bigint** C, int flag)
 {
-	if (x->sign == NEGATIVE)
-		bi_flip_sign(&x);
-
-	int flag = 4;
 	if (flag >= x->wordlen)
 	{
 		bi_squaring(x, C);
@@ -291,24 +288,20 @@ void bi_ksquaring(bigint* x, bigint** C)
 	int lw = l * WORD_BITLEN;
 	bigint* A0 = NULL;
 	bigint* A1 = NULL;
-	bigint* Copy_A0 = NULL;
-	bigint* Copy_A1 = NULL;
 	bi_assign(&A0, x);
 	bi_assign(&A1, x);
 
 	Right_Shift(&A1, lw);
 	Reduction(&A0, lw);
 
-	bi_assign(&Copy_A1, A1);
-	bi_assign(&Copy_A0, A0);
 
 	bigint* T1 = NULL;
 	bigint* T0 = NULL;
 	bi_new(&T1, 2 * l);
 	bi_new(&T0, 2 * l);
 
-	bi_ksquaring(A1, &T1);
-	bi_ksquaring(A0, &T0);
+	bi_ksquaring(A1, &T1, flag);
+	bi_ksquaring(A0, &T0, flag);
 
 	bigint* R = NULL;
 	bi_new(&R, 4 * l);
@@ -317,7 +310,7 @@ void bi_ksquaring(bigint* x, bigint** C)
 
 	bigint* S = NULL;
 	bi_new(&S, 2 * l);
-	bi_kmulc(Copy_A1, Copy_A0, &S);
+	bi_kmulc(A1, A0, &S);
 	Left_Shift(&S, lw + 1);
 
 	bi_self_add(&R, S);
@@ -327,8 +320,6 @@ void bi_ksquaring(bigint* x, bigint** C)
 
 	bi_delete(&A1);
 	bi_delete(&A0);
-	bi_delete(&Copy_A1);
-	bi_delete(&Copy_A0);
 	bi_delete(&T1);
 	bi_delete(&T0);
 	bi_delete(&S);
@@ -336,6 +327,18 @@ void bi_ksquaring(bigint* x, bigint** C)
 
 }
 
+void bi_ksquaringC(bigint* x, bigint** C)
+{
+	int sign = 0;
+	bigint* TEMP = NULL;
 
+	if (x->sign == NEGATIVE)
+		bi_flip_sign(&x);
 
+	int flag = (x->wordlen) / 2;
 
+	bi_ksquaring(x, &TEMP, flag);
+
+	bi_assign(C, TEMP);
+	bi_delete(&TEMP);
+}

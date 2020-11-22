@@ -554,8 +554,7 @@ void mul_test()
 			printf("\n");
 			bi_flip_sign(&a0);
 		}
-
-		bi_squaring(a0, &t0);
+		bi_ksquaringC(a0, &t0);
 		printf("z = 0x");
 		bi_show(t0, 16);
 		printf("\n");
