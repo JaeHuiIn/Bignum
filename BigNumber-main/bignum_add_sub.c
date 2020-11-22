@@ -154,7 +154,6 @@ void bi_sub(bigint* x, bigint* y, bigint** C)
 	{
 		bi_assign(&Copy_C, x);    // X를 리턴
 	}
-
 	else
 	{
 		if (Copy_x->sign == NON_NEGATIVE && Copy_y->sign == NON_NEGATIVE)    // x, y 둘다 양수

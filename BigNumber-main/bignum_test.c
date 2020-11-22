@@ -573,7 +573,7 @@ void mul_test()
 	bi_delete(&t0);
 
 }
-/*
+
 void div_test()
 {
 	int check = 10;
@@ -609,16 +609,16 @@ void div_test()
 
 	// test for bigint division
 	printf("# SAGE code\n");
-	for(int i = 0; i < check; i++) {
+	for (int i = 0; i < check; i++) {
 		bigint* a0 = NULL;
 		bigint* a1 = NULL;
 		bigint* Q = NULL;
 		bigint* R = NULL;
 
-		while(1){
+		while (1) {
 			bi_gen_rand(&a0, 0, random[i]);
 			bi_gen_rand(&a1, 0, random[i + 1]);
-			if(Compare_ABS(a0, a1) >= 0)
+			if (Compare_ABS(a0, a1) >= 0)
 				break;
 		}
 
@@ -638,7 +638,7 @@ void div_test()
 		bi_show(R, 16);
 		printf("\n");
 
-		printf("print((x // y == R) & (x % y) == Q)\n\n");
+		printf("print((x % y == R) & (x // y) == Q)\n\n");
 
 		bi_delete(&a0);
 		bi_delete(&a1);
@@ -646,5 +646,4 @@ void div_test()
 		bi_delete(&R);
 
 	}
-
-}*/
+}
