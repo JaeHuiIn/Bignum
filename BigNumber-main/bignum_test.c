@@ -157,7 +157,6 @@ void basic_test()
 	bi_delete(&teemo4);
 }
 
-
 void add_test()
 {
 	int check = 10;
@@ -254,7 +253,6 @@ void add_test()
 	}
 
 }
-
 
 void sub_test()
 {
@@ -575,3 +573,78 @@ void mul_test()
 	bi_delete(&t0);
 
 }
+/*
+void div_test()
+{
+	int check = 10;
+	int upper_limit = 15;
+	int lower_limit = 5;
+	printf("enter number for check(press 1 for basic setting): ");
+	scanf("%d", &check);
+	if (check == 1) {
+		check = 50;
+		upper_limit = 50;
+		lower_limit = 30;
+	}
+	else {
+		printf("enter upper limit: ");
+		scanf("%d", &upper_limit);
+		printf("enter lower limit: ");
+		scanf("%d", &lower_limit);
+		printf("\n");
+	}
+
+
+	int random[100] = { 0, };
+
+	// create integer for random wordlen and sign
+	for (int i = 0; i < check + 1; i++) {
+		while (1) {
+			random[i] = rand() % upper_limit;
+			if (random[i] >= lower_limit)
+				break;
+		}
+
+	}
+
+	// test for bigint division
+	printf("# SAGE code\n");
+	for(int i = 0; i < check; i++) {
+		bigint* a0 = NULL;
+		bigint* a1 = NULL;
+		bigint* Q = NULL;
+		bigint* R = NULL;
+
+		while(1){
+			bi_gen_rand(&a0, 0, random[i]);
+			bi_gen_rand(&a1, 0, random[i + 1]);
+			if(Compare_ABS(a0, a1) >= 0)
+				break;
+		}
+
+		printf("x = 0x");
+		bi_show(a0, 16);
+		printf("\n");
+		printf("y = 0x");
+		bi_show(a1, 16);
+		printf("\n");
+
+		DIV(a0, a1, &Q, &R);
+
+		printf("Q = 0x");
+		bi_show(Q, 16);
+		printf("\n");
+		printf("R = 0x");
+		bi_show(R, 16);
+		printf("\n");
+
+		printf("print((x // y == R) & (x % y) == Q)\n\n");
+
+		bi_delete(&a0);
+		bi_delete(&a1);
+		bi_delete(&Q);
+		bi_delete(&R);
+
+	}
+
+}*/

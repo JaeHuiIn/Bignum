@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 
-#define WORD_BITLEN 8
+#define WORD_BITLEN 32
 
 #if WORD_BITLEN == 8
 typedef unsigned char word;
