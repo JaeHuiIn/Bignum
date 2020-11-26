@@ -81,20 +81,21 @@ void L_D_A(bigint* A, word B, bigint** Q)   // 함수의 자료형으로 word �
 	bi_new(&R, 1);
 	bi_set_zero(Q);
 	R->a[0] = A->a[1];
+
 	word upper = (1ULL << (WORD_BITLEN - 1));
 	for (j = w; j >= 0; j--)
 	{
 		if (R->a[0] >= upper)
 		{
-			(*Q)->a[0] += 1 << j;
-			R->a[0] = 2 * (R->a[0]) + (A->a[0] & (1 << j)) - B;
+			(*Q)->a[0] += 1ULL << j;
+			R->a[0] = 2 * (R->a[0]) + ((A->a[0] & (1ULL << j)) >> j) - B;
 		}
 		else
 		{
-			R->a[0] = 2 * (R->a[0]) + ((A->a[0] & (1 << j))>>j);
+			R->a[0] = 2 * (R->a[0]) + ((A->a[0] & (1ULL << j))>>j);
 			if (R->a[0] >= B)
 			{
-				(*Q)->a[0] += 1 << j;
+				(*Q)->a[0] += 1ULL << j;
 				R->a[0] = (R->a[0]) - B;
 			}
 		}
@@ -124,20 +125,18 @@ void bi_divcc(bigint* A, bigint* B, bigint** Q, bigint** R) // 0 <= R < B, Q \in
 			L_D_A(Copy_A, B->a[m-1], Q);
 		}
 	}
-
 	bigint* BQ = NULL;
     // R = A - BQ를 위한 구조체 생성
     bi_mul(B, (*Q), &BQ);
     bi_sub(A, BQ, R);
     // Q_hat 계산 완료
-
-    // 근사시킨 Q_hat으로 Q를 구한다. 이를 위해 1 원소를 가지는 bignum을 생성
+	// 근사시킨 Q_hat으로 Q를 구한다. 이를 위해 1 원소를 가지는 bignum을 생성
    while((*R)->sign == NEGATIVE) 
    {  // while R < 0 
 	   (*Q)->a[0] -= 1;   // Q = Q - 1;
 	   bi_self_add(R, B);    // R = R + B;
    }
-    bi_delete(&BQ);
+   bi_delete(&BQ);
 	bi_delete(&Copy_A);
 }
 
@@ -148,7 +147,6 @@ void bi_divc(bigint* A, bigint* B, bigint** Q, bigint** R)
         bi_assign(R, A);
         return;
     }
-
     int m = B->wordlen; // bigint B의 워드길이는 m이다
     word upper = 1ULL << (WORD_BITLEN - 1);  // 2^{w-1} 생성
 
@@ -222,7 +220,8 @@ void DIV(bigint* A, bigint* B, bigint** Q, bigint** R)
 			(*Q)->a[i] = Q_i->a[0];
 
 		}
-
+		bi_refine(*Q);
+		bi_refine(*R);
 		bi_delete(&A_i);
 		bi_delete(&Q_i);
 		bi_delete(&R_temp);

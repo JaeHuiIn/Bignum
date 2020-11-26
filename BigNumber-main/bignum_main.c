@@ -8,7 +8,7 @@ int main()
 {
 	
 	srand((unsigned)time(NULL));
-	/*
+	
 	while(1) {			
 		int cases = 0;
 		printf("press 1 for basic test\n");
@@ -47,53 +47,52 @@ int main()
 			break;
 		
 	}
-	*/
 	
+	/*
 	bigint* A = NULL;
 	bigint* B = NULL;
 	bigint* C = NULL;
 	bigint* R = NULL;
 	bigint* Q = NULL;
 
-	word arr1[2] = {  0x9abcdef0, 0x12345678 };
-	word b[1] = { 0x8659653 };
-	word c[1] = { 0x9a5b632 };
+	word arr1[2] = { 0x9abcdef09abcdef0, 0x58659653a8659653 };//, 0x1234567812345678};
+	word b[1] = { 0xa534629815346298 }; //, 0xa8659653a8659653};
+	word c[2] = { 0x23a569bd23a569bd, 0x99a5b63299a5b632 };
 	bi_new(&A, 2);
 	bi_set_by_array(&A, 0, arr1, 2);
 	bi_new(&B, 1);
 	bi_set_by_array(&B, 0, b, 1);
-	bi_new(&C, 1);
-	bi_set_by_array(&C, 0, c, 1);
-	printf("\nA = ");
+	bi_new(&C, 2);
+	bi_set_by_array(&C, 0, c, 2);
+	printf("\na = 0x");
 	bi_show(A, 16);
-	printf("\n");
-	
+	printf("\nb = 0x");
+	bi_show(B, 16);
+
 	L_D_A(A, b[0], &Q);
+	bi_divcc(A, B, &Q, &R);
 	
-	printf("\na = 0x");
-	bi_show(A, 16);
-	printf("\nb = 0x%08x", b[0]);
-	//bi_show(B, 16);
 	printf("\nq = 0x", Q);
 	bi_show(Q, 16);
-	//printf("\nr = 0x", Q);
-	//bi_show(R, 16);
+	printf("\nr = 0x", Q);
+	bi_show(R, 16);
 	printf("\nprint(q == a//b)\n");
-	
-	L_D_A(A, c[0], &Q);
-	
+	printf("print(r == a - b*q)\n");
+
+	bi_divcc(A, C, &Q, &R);
+
 	printf("\na = 0x");
 	bi_show(A, 16);
-	printf("\nb = 0x%08x", c[0]);
-	//bi_show(C, 16);
+	printf("\nb = 0x");
+	bi_show(C, 16);
 	printf("\nq = 0x", Q);
 	bi_show(Q, 16);
-	//printf("\nr = 0x", Q);
-	//bi_show(R, 16);
-	printf("\nprint(q == a//b)\n");
+	printf("\nr = 0x", Q);
+	bi_show(R, 16);
+	printf("\nprint(q == a//b)");
+	printf("\nprint(r == a - b*q)\n");
 	
-
-
+	*/
 	printf("Thanks for using!\n");
 	return 0;
 }

@@ -604,7 +604,6 @@ void div_test()
 			if (random[i] >= lower_limit)
 				break;
 		}
-
 	}
 
 	int choose;
@@ -682,25 +681,32 @@ void div_test()
 	}
 	else if (choose == 3) {
 		// test for multi-pricision Division
-		printf("# SAGE code\n");
+		int ran1;
+		int ran2;
 		printf("# SAGE code\n");
 		for(int i = 0; i < check; i++) {
-			while(1) {
-				bi_gen_rand(&A, 0, random[i]);
-				bi_gen_rand(&B, 0, random[i + 1]);
-				if(Compare_ABS(A, B) >= 0)
+			//printf("111111111111111111111\n");
+			while (1) {
+				//printf("zzzzzzzzzzz\n");
+				ran1 = rand() % check;
+				ran2 = (ran1 + 1) % check;
+
+				bi_gen_rand(&A, 0, random[ran1]);
+				bi_gen_rand(&B, 0, random[ran2]);
+
+				if (Compare_ABS(A, B) >= 0)
 					break;
 			}
-
+			//printf("222222222222222222222222222\n");
 			printf("x = 0x");
 			bi_show(A, 16);
 			printf("\n");
 			printf("y = 0x");
 			bi_show(B, 16);
 			printf("\n");
-
+			//printf("33333333333333333333333333\n");
 			DIV(A, B, &Q, &R);
-
+			//printf("4444444444444444444444444444\n");
 			printf("Q = 0x");
 			bi_show(Q, 16);
 			printf("\n");
@@ -708,7 +714,9 @@ void div_test()
 			bi_show(R, 16);
 			printf("\n");
 
-			printf("print((x %% y == R) & (x // y) == Q)\n\n");
+			printf("print((x %% y == R) & ((x // y) == Q))\n\n");
+			//printf("55555555555555555\n");
+
 		}
 
 

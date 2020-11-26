@@ -106,8 +106,6 @@ void bi_show(bigint* x, word base)
 				int temp = ((x->a[i]) >> j) & 0x01;
 				printf("%d", temp);
 			}
-			printf("\t");
-
 		}
 
 	}
