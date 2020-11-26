@@ -4,10 +4,10 @@ void bi_mulc(word x, word y, bigint** C)
 {
 	word crr = 0;
    	word R_x = x >> (WORD_BITLEN / 2);      // x를 절반으로 나눈 앞 자리
-   	word L_x = x % (1 << (WORD_BITLEN / 2));// x를 절반으로 나눈 뒷 자리
-   	word R_y = y >> (WORD_BITLEN / 2);      // y를 절반으로 나눈 앞 자리
-   	word L_y = y % (1 << (WORD_BITLEN/2));  // y를 절반으로 나눈 뒷 자리
-   	word A0, A1, AA, AA0, AA1, AAA;  //계산한 것을 저장할 곳
+   	word L_x = x % (1ULL << (WORD_BITLEN / 2));// x를 절반으로 나눈 뒷 자리
+	word R_y = y >> (WORD_BITLEN / 2);      // y를 절반으로 나눈 앞 자리
+   	word L_y = y % (1ULL << (WORD_BITLEN/2));  // y를 절반으로 나눈 뒷 자리
+	word A0, A1, AA, AA0, AA1, AAA;  //계산한 것을 저장할 곳
    	word c = 0;
    	A1 = R_x * R_y; // 앞 자리끼리 곱
    	A0 = L_x * L_y; // 뒷 자리끼리 곱
@@ -73,7 +73,7 @@ void bi_mul(bigint* x, bigint* y, bigint** C)
 
 void bi_kmul(bigint* x, bigint* y, bigint** C, int flag)
 {
-	// printf("test\n");
+	// printf("test 1\n");
 	// int flag = 10;
 	if (flag >= x->wordlen || flag >= y->wordlen)
 	{
@@ -81,7 +81,7 @@ void bi_kmul(bigint* x, bigint* y, bigint** C, int flag)
 
 		return;
 	}
-	// printf("test\n");
+	// printf("test 2\n");
 
 	int l;
 	if(x->wordlen > y->wordlen)
@@ -218,7 +218,9 @@ void bi_squaringC(word x, bigint** C)
 	word CT;
 	word c = 0;
 	word A1 = x >> (WORD_BITLEN / 2);        // x를 절반으로 나눈 앞 자리
-	word A0 = x % (1 << (WORD_BITLEN / 2));  // x를 절반으로 나눈 뒷 자리
+	//word A0 = x % (1 << (WORD_BITLEN / 2));  // x를 절반으로 나눈 뒷 자리
+	word A0 = x << (WORD_BITLEN / 2);
+	A0 = A0 >> (WORD_BITLEN / 2);
 	word C1 = A1 * A1;                       // 앞 자리끼리 곱
 	word C0 = A0 * A0;                       // 뒷 자리끼리 곱
 	word AA = A1 * A0;

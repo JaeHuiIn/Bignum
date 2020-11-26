@@ -178,8 +178,8 @@ void add_test()
 	}
 
 
-	int random[100] = { 0, };
-	int sign[100] = { 0, };
+	int random[1000] = { 0, };
+	int sign[1000] = { 0, };
 
 	// create integer for random wordlen and sign
 	for (int i = 0; i < check + 1; i++) {
@@ -275,8 +275,8 @@ void sub_test()
 	}
 
 
-	int random[100] = { 0, };
-	int sign[100] = { 0, };
+	int random[1000] = { 0, };
+	int sign[1000] = { 0, };
 
 	// create integer for random wordlen and sign
 	for (int i = 0; i < check + 1; i++) {
@@ -371,8 +371,8 @@ void mul_test()
 		printf("\n");
 	}
 
-	int random[100] = { 0, };
-	int sign[100] = { 0, };
+	int random[1000] = { 0, };
+	int sign[1000] = { 0, };
 
 	// create integer for random wordlen and sign
 	for (int i = 0; i < check + 1; i++) {
@@ -595,9 +595,9 @@ void div_test()
 	}
 
 
-	int random[100] = { 0, };
+	int random[1000] = { 0, };
 
-	// create integer for random wordlen and sign
+	// create integer for random wordlen. sign is always POSITIVE
 	for (int i = 0; i < check + 1; i++) {
 		while (1) {
 			random[i] = rand() % upper_limit;
@@ -607,43 +607,121 @@ void div_test()
 
 	}
 
-	// test for bigint division
-	printf("# SAGE code\n");
-	for (int i = 0; i < check; i++) {
-		bigint* a0 = NULL;
-		bigint* a1 = NULL;
-		bigint* Q = NULL;
-		bigint* R = NULL;
+	int choose;
+	printf("Choose your work\n1. School book division \n2. School book Binary Long Division \n3. Multi-Pricision Long Division\n");
+	scanf("%d", &choose);
+	bigint* A = NULL;
+	bigint* B = NULL;
+	bigint* Q = NULL;
+	bigint* R = NULL;
+	clock_t start = clock();
 
-		while (1) {
-			bi_gen_rand(&a0, 0, random[i]);
-			bi_gen_rand(&a1, 0, random[i + 1]);
-			if (Compare_ABS(a0, a1) >= 0)
-				break;
+
+	if (choose == 1) {
+		// test for school book division
+		printf("# SAGE code\n");
+		for(int i = 0; i < check; i++) {
+			while(1) {
+				bi_gen_rand(&A, 0, random[i]);
+				bi_gen_rand(&B, 0, random[i + 1]);
+				if(Compare_ABS(A, B) >= 0)
+					break;
+			}
+
+			printf("x = 0x");
+			bi_show(A, 16);
+			printf("\n");
+			printf("y = 0x");
+			bi_show(B, 16);
+			printf("\n");
+
+			bi_sb_div(A, B, &Q, &R);
+
+			printf("Q = 0x");
+			bi_show(Q, 16);
+			printf("\n");
+			printf("R = 0x");
+			bi_show(R, 16);
+			printf("\n");
+
+			printf("print((x %% y == R) & (x // y) == Q)\n\n");
 		}
 
-		printf("x = 0x");
-		bi_show(a0, 16);
-		printf("\n");
-		printf("y = 0x");
-		bi_show(a1, 16);
-		printf("\n");
+	}
+	else if (choose == 2) {
+		// test for school book B_L_D
+		printf("# SAGE code\n");
+		for(int i = 0; i < check; i++) {
+			while(1) {
+				bi_gen_rand(&A, 0, random[i]);
+				bi_gen_rand(&B, 0, random[i + 1]);
+				if(Compare_ABS(A, B) >= 0)
+					break;
+			}
 
-		DIV(a0, a1, &Q, &R);
+			printf("x = 0x");
+			bi_show(A, 16);
+			printf("\n");
+			printf("y = 0x");
+			bi_show(B, 16);
+			printf("\n");
 
-		printf("Q = 0x");
-		bi_show(Q, 16);
-		printf("\n");
-		printf("R = 0x");
-		bi_show(R, 16);
-		printf("\n");
+			Binary_Long_Division(A, B, &Q, &R);
 
-		printf("print((x % y == R) & (x // y) == Q)\n\n");
+			printf("Q = 0x");
+			bi_show(Q, 16);
+			printf("\n");
+			printf("R = 0x");
+			bi_show(R, 16);
+			printf("\n");
 
-		bi_delete(&a0);
-		bi_delete(&a1);
-		bi_delete(&Q);
-		bi_delete(&R);
+			printf("print((x %% y == R) & (x // y) == Q)\n\n");
+		}
+
 
 	}
+	else if (choose == 3) {
+		// test for multi-pricision Division
+		printf("# SAGE code\n");
+		printf("# SAGE code\n");
+		for(int i = 0; i < check; i++) {
+			while(1) {
+				bi_gen_rand(&A, 0, random[i]);
+				bi_gen_rand(&B, 0, random[i + 1]);
+				if(Compare_ABS(A, B) >= 0)
+					break;
+			}
+
+			printf("x = 0x");
+			bi_show(A, 16);
+			printf("\n");
+			printf("y = 0x");
+			bi_show(B, 16);
+			printf("\n");
+
+			DIV(A, B, &Q, &R);
+
+			printf("Q = 0x");
+			bi_show(Q, 16);
+			printf("\n");
+			printf("R = 0x");
+			bi_show(R, 16);
+			printf("\n");
+
+			printf("print((x %% y == R) & (x // y) == Q)\n\n");
+		}
+
+
+	}
+	else
+		printf("You choose wrong number\n");
+	
+	clock_t end = clock();
+	printf("Time : %lf\n", (double)(end - start) / CLOCKS_PER_SEC);
+
+	bi_delete(&A);
+	bi_delete(&B);
+	bi_delete(&Q);
+	bi_delete(&R);
+
 }

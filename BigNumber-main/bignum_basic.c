@@ -130,7 +130,7 @@ void bi_show(bigint* x, word base)
 		else if (WORD_BITLEN == 64)
 		{
 			for (int i = x->wordlen - 1; i >= 0; i--)
-				printf("%16x", x->a[i]);
+				printf("%016llx", x->a[i]);
 		}
 	}
 
