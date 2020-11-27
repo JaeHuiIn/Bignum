@@ -1,4 +1,4 @@
-#include "bignum_basic.h"
+#include "bignum_all_header.h"
 
 void array_init(word* a, int wordlen)
 {
@@ -50,47 +50,95 @@ void bi_set_by_array(bigint** x, int sign, word* a, int wordlen)   // bigint x <
 	}
 }
 
-/*
-// developed by CJH
-// 에러 많이남.
-void bi_set_by_string(bigint** x, int sign, char* a, word base)   // bigint x <- base string
+void bi_set_by_string(bigint** x, int sign, char* a, int base)   // bigint x <- base string
 {
-	(*x)->sign;
+	bi_new(x, 1);
+	bi_set_zero(x);
+	(*x)->sign = NON_NEGATIVE;	// 구현 편의성을 위해 양수로 구현 후, sign == NEGATIVE이면 마지막에 sign을 뒤집는다.
 
-	int len = strlen(a);
+	int len = strlen(a);	// get length of string
 
-	if(base == 2){
-		int k = 0;
-		for(int i = (*x)->wordlen - 1; i >= 0; i--){    // x.a[3], x.a[2], x.a[1], x.a[0] 순서대로 바이트를 집어넣는다.
-			while(1) {
-				(*x)->a[i] = ((*x)->a[i] << 1) | atoi(a[k]);   // 해당 x.a[i] 를 한비트 왼쪽 이동하고, 0번 인덱스 자리에 문자열의 0 또는 1을 OR연산한다.
-				k += 1;
-				if((len - k) % WORD_BITLEN == 0)    // len - k가 WORD_BITLEN의 배수이면 다음 x.a[i] 에 숫자를 저장해야 한다.
-					break;                          // 즉, 한개의 x.a[i]에는 WORD_BITLEN 만큼 0과 1이 들어가게 된다.
+	if(base == 2){	// 2진수 string 입력
+		// int k = 0;
+		bigint* ZERO = NULL;
+		bigint* ONE = NULL;
+		bi_set_zero(&ZERO);
+		bi_set_one(&ONE);
+
+		/*
+		i는 문자열 a의 위치 인덱스이다.
+		i의 인덱스가 작을수록 MSB에 가까워진다.
+		*/
+		for(int i = 0; i < len; i++) {
+			Left_Shift(x, 1);
+			if(a[i] == 48){
+				// printf("a_i = %d\n", a[i]);
+				bi_self_add(x, ZERO);
 			}
+			else{
+				// printf("a_i = %d\n", a[i]);
+				bi_self_add(x, ONE);
+			}
+		}
+
+		bi_delete(&ZERO);
+		bi_delete(&ONE);
+
+		bi_refine(*x);
+
+	}
+	else if(base == 10){	// 10진수 string 입력 
+		bigint* DEC = NULL;
+		bigint* TEN = NULL;
+		bigint* x_temp = NULL;
+		bi_set_zero(&DEC);
+		bi_set_zero(&TEN);
+		TEN->a[0] = 10;
+
+
+		for(int i = 0; i < len; i++) {
+			bi_assign(&x_temp, *x);
+			bi_mul(x_temp, TEN, x);	// 입력값 x에 10을 곱한다
+
+			DEC->a[0] = a[i] - 48;
+
+			bi_self_add(x, DEC);
 
 		}
 
+		bi_delete(&DEC);
+		bi_delete(&TEN);
+		bi_delete(&x_temp);
+		
 	}
-	else if(base == 10){
-		// NEED TO IMPLEMENT!!
-	}
-	else if(base == 16){
-		int k = 0;
-		for(int i = (*x)->wordlen - 1; i >= 0; i--){
-			while(1) {
-				(*x)->a[i] = ((*x)->a[i] << 4) | atoi(a[k]);
-			}
-			k += 1;
-			if((len - k) % WORD_BITLEN == 0)
-				break;
+	else if(base == 16){	// 16진수 string 입력
+		bigint* HEX = NULL;
+		bi_set_zero(&HEX);
+		
+		for(int i = 0; i < len; i++){
+			Left_Shift(x, 4);
+
+			if(a[i] <= 57)	// a[i] == 0 ~ 9
+				HEX->a[0] = a[i] - 48;
+			else	// a[i] == a ~ f
+				HEX->a[0] = a[i] - 87;
+
+			bi_self_add(x, HEX);
+
 		}
 
+		bi_delete(&HEX);
+
+		bi_refine(*x);
+
 	}
 
+
+	if(sign == NEGATIVE)	// sign이 음수일 때 부호를 음수로 바꿔준다.
+		bi_flip_sign(x);
 
 }
-*/
+
 
 // Show big int
 void bi_show(bigint* x, word base)

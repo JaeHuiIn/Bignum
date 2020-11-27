@@ -24,20 +24,15 @@ void bi_sb_div(bigint* A, bigint* B, bigint** Q, bigint** R)	// schoolbook divis
 
 	bigint* ONE = NULL;
 	bi_set_one(&ONE);
-	
+
 	while(Compare_ABS(*R, B) >= 0) {	// while R >= B
 		bi_self_add(Q, ONE);
-
 		bigint* R_temp = NULL;
 		bi_assign(&R_temp, *R);
 		bi_subc(R_temp, B, R);
 		bi_delete(&R_temp);
-
 	}
-
-
 	bi_delete(&ONE);
-
 }
 
 void Binary_Long_Division(bigint* A, bigint* B, bigint** Q, bigint** R)
@@ -45,7 +40,7 @@ void Binary_Long_Division(bigint* A, bigint* B, bigint** Q, bigint** R)
 	bi_set_zero(Q);
 	bi_set_zero(R);
 	
-	int n = A->wordlen;
+	int n = (A->wordlen) * WORD_BITLEN;
 	int a_j;
 
 	for(int j = n-1; j >= 0; j--) {

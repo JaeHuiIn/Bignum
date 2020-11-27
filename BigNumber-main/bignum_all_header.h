@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 
-#define WORD_BITLEN 8
+#define WORD_BITLEN 64
 
 #if WORD_BITLEN == 8
 typedef unsigned char word;
@@ -25,6 +25,8 @@ word arr[3] = { 0x0123456789abcdef, 0x9abcedf012345678, 0xdef0123456789abc };
 
 #define ZERORIZE 0
 
+/////
+// basic function
 /* Dynamic Memory Allocation */
 typedef struct {
 
@@ -41,6 +43,7 @@ void bi_new(bigint** x, int wordlen);
 
 /* 2.2 Set BigInt, Show BigInt */
 void bi_set_by_array(bigint** x, int sign, word* a, int wordlen);   // bigint x <- sign and array a
+void bi_set_by_string(bigint** x, int sign, char* a, int base); 
 void bi_show(bigint* x, word base);
 
 /* 2.3 Refine BigInt (Remove Last Zero Words) */
@@ -80,6 +83,45 @@ void Right_Shift(bigint** x, int r);
 /* 2.11 Reduction */
 void Reduction(bigint** A, int r);
 
+
+/////
+// 덧셈, 뺄셈 구현
+
+//bigint 덧셈
+void bi_add(bigint* x, bigint* y, bigint** C);
+void bi_self_add(bigint** x, bigint* y);
+
+// bigint 뺄셈
+void bi_subc(bigint* x, bigint*y, bigint ** C);  // x >= y > 0 에서 x - y
+void bi_sub(bigint* x, bigint*y, bigint** C);
+
+
+/////
+// 곱셈 구현
+void bi_mulc(word x, word y, bigint** C);
+void bi_mul(bigint* x, bigint* y, bigint** C);
+void bi_kmul(bigint* x, bigint* y, bigint** C, int flag);
+void bi_kmulc(bigint* x, bigint* y, bigint** C);
+void bi_squareC(word x, bigint** C);
+void bi_square(bigint* x, bigint** C);
+void bi_ksquaring(bigint* x, bigint** C, int flag);
+void bi_ksquaringC(bigint* x, bigint** C);
+
+/////
+// 나눗셈 구현
+// schoolbook division
+void bi_sb_div(bigint* A, bigint* B, bigint** Q, bigint** R);
+
+// schoolbook binary long division
+void Binary_Long_Division(bigint* A, bigint* B, bigint** Q, bigint** R);
+
+//word L_D_A(bigint* A, word B);  // Long Division Algorithm with 2 word
+void L_D_A(bigint* A, word B, bigint** Q);
+void bi_divcc(bigint* A, bigint* B, bigint** Q, bigint** R);
+
+void bi_divc(bigint* A, bigint* B, bigint** Q, bigint** R);
+
+void DIV(bigint* A, bigint* B, bigint** Q, bigint** R);
 
 
 
