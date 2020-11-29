@@ -159,9 +159,7 @@ void basic_test()
 
 void add_test()
 {
-	int check = 10;
-	int upper_limit = 15;
-	int lower_limit = 5;
+	int check, upper_limit, lower_limit;
 	printf("enter number for check(press 1 for basic setting): ");
 	scanf("%d", &check);
 	if (check == 1) {
@@ -256,9 +254,7 @@ void add_test()
 
 void sub_test()
 {
-	int check = 10;
-	int upper_limit = 15;
-	int lower_limit = 5;
+	int check, upper_limit, lower_limit;
 	printf("enter number for check(press 1 for basic setting): ");
 	scanf("%d", &check);
 	if (check == 1) {
@@ -353,9 +349,7 @@ void sub_test()
 
 void mul_test()
 {
-	int check = 10;
-	int upper_limit = 15;
-	int lower_limit = 5;
+	int check, upper_limit, lower_limit;
 	printf("enter number for check(press 1 for basic setting): ");
 	scanf("%d", &check);
 	if (check == 1) {
@@ -576,9 +570,7 @@ void mul_test()
 
 void div_test()
 {
-	int check = 10;
-	int upper_limit = 15;
-	int lower_limit = 5;
+	int check, upper_limit, lower_limit;
 	printf("enter number for check(press 1 for basic setting): ");
 	scanf("%d", &check);
 	if (check == 1) {
@@ -617,13 +609,20 @@ void div_test()
 
 
 	if (choose == 1) {
+		int ran1;
+		int ran2;
 		// test for school book division
 		printf("# SAGE code\n");
-		for(int i = 0; i < check; i++) {
-			while(1) {
-				bi_gen_rand(&A, 0, random[i]);
-				bi_gen_rand(&B, 0, random[i + 1]);
-				if(Compare_ABS(A, B) >= 0)
+		printf("# SAGE code\n");
+		for (int i = 0; i < check; i++) {
+			while (1) {
+				ran1 = rand() % check;
+				ran2 = (ran1 + 1) % check;
+
+				bi_gen_rand(&A, 0, random[ran1]);
+				bi_gen_rand(&B, 0, random[ran2]);
+
+				if (Compare_ABS(A, B) >= 0)
 					break;
 			}
 
@@ -648,13 +647,19 @@ void div_test()
 
 	}
 	else if (choose == 2) {
+		int ran1;
+		int ran2;
 		// test for school book B_L_D
 		printf("# SAGE code\n");
-		for(int i = 0; i < check; i++) {
-			while(1) {
-				bi_gen_rand(&A, 0, random[i]);
-				bi_gen_rand(&B, 0, random[i + 1]);
-				if(Compare_ABS(A, B) >= 0)
+		for (int i = 0; i < check; i++) {
+			while (1) {
+				ran1 = rand() % check;
+				ran2 = (ran1 + 1) % check;
+
+				bi_gen_rand(&A, 0, random[ran1]);
+				bi_gen_rand(&B, 0, random[ran2]);
+
+				if (Compare_ABS(A, B) >= 0)
 					break;
 			}
 
@@ -685,9 +690,7 @@ void div_test()
 		int ran2;
 		printf("# SAGE code\n");
 		for(int i = 0; i < check; i++) {
-			//printf("111111111111111111111\n");
 			while (1) {
-				//printf("zzzzzzzzzzz\n");
 				ran1 = rand() % check;
 				ran2 = (ran1 + 1) % check;
 
@@ -697,16 +700,13 @@ void div_test()
 				if (Compare_ABS(A, B) >= 0)
 					break;
 			}
-			//printf("222222222222222222222222222\n");
 			printf("x = 0x");
 			bi_show(A, 16);
 			printf("\n");
 			printf("y = 0x");
 			bi_show(B, 16);
 			printf("\n");
-			//printf("33333333333333333333333333\n");
 			DIV(A, B, &Q, &R);
-			//printf("4444444444444444444444444444\n");
 			printf("Q = 0x");
 			bi_show(Q, 16);
 			printf("\n");
@@ -733,3 +733,148 @@ void div_test()
 	bi_delete(&R);
 
 }
+
+void mod_exp_test()
+{
+	int check, upper_limit, lower_limit, n, N;
+	printf("enter number for check(press 1 for basic setting): ");
+	scanf("%d", &check);
+	if (check == 1) {
+		check = 50;
+		upper_limit = 50;
+		lower_limit = 30;
+		n = 5;
+		N = 10;
+	}
+	else {
+		printf("enter upper limit: ");
+		scanf("%d", &upper_limit);
+		printf("enter lower limit: ");
+		scanf("%d", &lower_limit);
+		printf("\n");
+		printf("enter exponential number: ");
+		scanf("%d", &n);
+		printf("enter wordlen N: ");
+		scanf("%d", N);
+		printf("\n");
+	}
+
+	int random[1000] = {0, };
+
+	// create integer for random wordlen. sign is always POSITIVE
+	for (int i = 0; i < check + 1; i++) {
+		while (1) {
+			random[i] = rand() % upper_limit;
+			if (random[i] >= lower_limit)
+				break;
+		}
+	}
+
+	int choose;
+	printf("Choose your work\n1. Left-to-Right\n2. Right-to-Left\n3. Multiply-and-Squaring\n");
+	scanf("%d", &choose);
+	bigint* A = NULL;
+	bigint* NN = NULL;
+
+	clock_t start = clock();
+
+	if(choose == 1) {
+		// Left-to-Right
+		printf("# SAGE code\n");
+		for(int i = 0; i < check; i++) {
+			bi_gen_rand(&A, 0, random[i]);
+			bi_gen_rand(&NN, 0, N);
+
+			printf("x = 0x");
+			bi_show(A, 16);
+			printf("\n");
+
+			printf("n = %d\n", n);
+
+			printf("N = 0x");
+			bi_show(NN, 16);
+			printf("\n");
+
+			L_t_R(&A, n, NN);
+
+			printf("z = 0x");
+			bi_show(A, 16);
+			printf("\n");
+
+			printf("print((x**n) %% N == z)\n");
+
+		}
+
+	}
+	else if(choose == 2) {
+		// Right-to-Left
+		printf("# SAGE code\n");
+		for(int i = 0; i < check; i++) {
+			bi_gen_rand(&A, 0, random[i]);
+			bi_gen_rand(&NN, 0, N);
+
+			printf("x = 0x");
+			bi_show(A, 16);
+			printf("\n");
+
+			printf("n = %d\n", n);
+
+			printf("N = 0x");
+			bi_show(NN, 16);
+			printf("\n");
+
+			R_t_L(&A, n, NN);
+
+			printf("z = 0x");
+			bi_show(A, 16);
+			printf("\n");
+
+			printf("print((x**n) %% N == z)\n");
+		}
+
+	}
+	else if(choose == 3) {
+		// Multiply-and-Squaring
+		printf("# SAGE code\n");
+		for(int i = 0; i < check; i++) {
+			bi_gen_rand(&A, 0, random[i]);
+			bi_gen_rand(&NN, 0, N);
+
+			printf("x = 0x");
+			bi_show(A, 16);
+			printf("\n");
+
+			printf("n = %d\n", n);
+
+			printf("N = 0x");
+			bi_show(NN, 16);
+			printf("\n");
+
+			M_n_S(&A, n, NN);
+
+			printf("z = 0x");
+			bi_show(A, 16);
+			printf("\n");
+
+			printf("print((x**n) %% N == z)\n");
+		}
+
+
+	}
+	else
+		printf("You choose wrong number\n");
+	
+
+
+
+
+
+
+	clock_t end = clock();
+	printf("Time : %lf\n", (double)(end - start) / CLOCKS_PER_SEC);
+
+	bi_delete(&A);
+	bi_delete(&NN);
+}
+
+

@@ -45,7 +45,7 @@ void Binary_Long_Division(bigint* A, bigint* B, bigint** Q, bigint** R)
 	bi_set_zero(Q);
 	bi_set_zero(R);
 	
-	int n = A->wordlen;
+	int n = (A->wordlen);
 	int a_j;
 
 	for(int j = n-1; j >= 0; j--) {

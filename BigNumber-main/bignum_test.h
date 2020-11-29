@@ -9,3 +9,5 @@ void sub_test();
 void mul_test();
 
 void div_test();
+
+void mod_exp_test();
