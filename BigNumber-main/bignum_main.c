@@ -9,6 +9,54 @@ int main()
 	
 	srand((unsigned)time(NULL));
 	
+
+	bigint* a = NULL;
+	bigint* b = NULL;
+	bigint* c = NULL;
+
+	bi_gen_rand(&a, 0, 3);
+	bi_assign(&b, a);
+	bi_assign(&c, a);
+	printf("x = 0x");
+	bi_show(a, 16);
+	printf("\n");
+	printf("y = 0x");
+	bi_show(b, 16);
+	printf("\n");
+	printf("z = 0x");
+	bi_show(c, 16);
+	printf("\n");
+
+	int n = 5;
+	bigint* N = NULL;
+
+	printf("n = %d\n", n);
+	bi_gen_rand(&N, 0, 1);
+	printf("N = 0x");
+	bi_show(N, 16);
+	printf("\n");
+
+	L_t_R(&a, n, N);
+	printf("l = 0x");
+	bi_show(a, 16);
+	printf("\n");
+
+	R_t_L(&b, n, N);
+	printf("m = 0x");
+	bi_show(b, 16);
+	printf("\n");
+
+
+	M_n_S(&c, n, N);
+	printf("n = 0x");
+	bi_show(c, 16);
+	printf("\n");
+
+	printf("print((x**n) %% N == l)\n");
+	printf("print((y**n) %% N == m)\n");
+	printf("print((z**n) %% N == n)\n");
+
+	/*
 	
 	while(1) {			
 		int cases = 0;
@@ -49,6 +97,7 @@ int main()
 		
 	}
 	
+	*/
 	
 	/*
 	// 에러 검사용 주석
@@ -58,11 +107,11 @@ int main()
 	bigint* R = NULL;
 	bigint* Q = NULL;
 
-	word arr1[1] = { 0x9abcdef09abcdef0 };//, 0x1234567812345678};
-	word b[1] = { 0x34629815346298 };
+	word arr1[2] = { 0x9abcdef09abcdef0, 0x58659653a8659653 };//, 0x1234567812345678};
+	word b[1] = { 0xa534629815346298 }; //, 0xa8659653a8659653};
 	word c[2] = { 0x23a569bd23a569bd, 0x99a5b63299a5b632 };
-	bi_new(&A, 1);
-	bi_set_by_array(&A, 0, arr1, 1);
+	bi_new(&A, 2);
+	bi_set_by_array(&A, 0, arr1, 2);
 	bi_new(&B, 1);
 	bi_set_by_array(&B, 0, b, 1);
 	bi_new(&C, 2);
@@ -72,7 +121,8 @@ int main()
 	printf("\nb = 0x");
 	bi_show(B, 16);
 
-	bi_sb_div(A, B, &Q, &R);
+	L_D_A(A, b[0], &Q);
+	bi_divcc(A, B, &Q, &R);
 	
 	printf("\nq = 0x", Q);
 	bi_show(Q, 16);
@@ -80,8 +130,8 @@ int main()
 	bi_show(R, 16);
 	printf("\nprint(q == a//b)\n");
 	printf("print(r == a - b*q)\n");
-	
-	Binary_Long_Division(A, C, &Q, &R);
+
+	bi_divcc(A, C, &Q, &R);
 
 	printf("\na = 0x");
 	bi_show(A, 16);
@@ -94,9 +144,11 @@ int main()
 	printf("\nprint(q == a//b)");
 	printf("\nprint(r == a - b*q)\n");
 	
-	
+	*/
 
-	
+
+
+	/*	
 	char a[] = "3456789876543456";
 
 	bigint* Teemo = NULL;
@@ -111,11 +163,12 @@ int main()
 
 	bi_show(Teemo, 16);
 	printf("\n");
+	*/
 
 
 
 	printf("Thanks for using!\n");
-	*/
+	
 
 	return 0;
 }

@@ -1,28 +1,25 @@
-// test for bigint division
-	printf("# SAGE code\n");
-	for (int i = 0; i < check; i++) {
+#include <stdio.h>
 
-		while (1) {
-			bi_gen_rand(&a, 0, random[i]);
-			bi_gen_rand(&b, 0, random[i + 1]);
-			if (Compare_ABS(a, b) >= 0)
-				break;
-		}
+int main()
+{
 
-		printf("x = 0x");
-		bi_show(a, 16);
-		printf("\n");
-		printf("y = 0x");
-		bi_show(b, 16);
-		printf("\n");
+	int n = 3;
+	int bit[2049] = {0, };
+    int n_temp = n;
 
-		DIV(a, b, &q, &r);
+    int j = 0;
 
-		printf("Q = 0x");
-		bi_show(Q, 16);
-		printf("\n");
-		printf("R = 0x");
-		bi_show(R, 16);
-		printf("\n");
+    while(n_temp >= 1) {
+        bit[j] = n_temp & 0x01;
 
-		printf("print((x % y == R) & (x // y) == Q)\n\n");
+        j += 1;
+        n_temp = n_temp >> 1;
+
+    }
+
+	for(int i = 2; i >= 0; i--)
+		printf("%d ", bit[i]);
+	printf("\n");
+
+	return 0;
+}
