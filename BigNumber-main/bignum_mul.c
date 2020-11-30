@@ -198,7 +198,10 @@ void bi_kmulc(bigint* x, bigint* y, bigint** C)
 		flag = y->wordlen;
 
 	flag = flag / 2;
-	bi_kmul(x, y, &TEMP, flag);
+	if (flag == 0)
+		bi_mul(x, y, C);
+	else
+		bi_kmul(x, y, &TEMP, flag);
 
 	bi_assign(C, TEMP);
 	if(sign == NEGATIVE)
@@ -338,9 +341,19 @@ void bi_ksquaringC(bigint* x, bigint** C)
 		bi_flip_sign(&x);
 
 	int flag = (x->wordlen) / 2;
-
-	bi_ksquaring(x, &TEMP, flag);
+	if(flag == 0)
+		bi_squaring(x, C);
+	else
+		bi_ksquaring(x, &TEMP, flag);
 
 	bi_assign(C, TEMP);
 	bi_delete(&TEMP);
+}
+
+void bi_self_mul(bigint** x, bigint* y)
+{
+	bigint* Copy_x = NULL;
+	bi_assign(&Copy_x, *x);
+	bi_mul(Copy_x, y, x);
+	bi_delete(&Copy_x);
 }

@@ -211,3 +211,11 @@ void bi_sub(bigint* x, bigint* y, bigint** C)
 	bi_delete(&Copy_y);
 
 }
+
+void bi_self_sub(bigint** x, bigint* y)
+{
+	bigint* Copy_x = NULL;
+	bi_assign(&Copy_x, *x);
+	bi_sub(Copy_x, y, x);
+	bi_delete(&Copy_x);
+}
