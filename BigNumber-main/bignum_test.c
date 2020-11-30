@@ -1,4 +1,4 @@
-#include "bignum_test.h"
+#include "bignum_all_header.h"
 
 void basic_test()
 {
@@ -12,18 +12,13 @@ void basic_test()
 	bi_new(&teemo1, 3);
 	printf("created\n\n");
 
-	// set bigint by array
-	printf("set by array\n");
-	bi_set_by_array(&teemo1, teemo1->sign, arr, teemo1->wordlen);
-	printf("set completed\n\n");
-
 	// show big int
 	printf("#show big int\n");
 	printf("#show by base 2: ");
 	bi_show(teemo1, 2);
 	printf("\n");
 	// printf("show by base 10: \n");
-   // bi_show(teemo, 10);
+  	// bi_show(teemo, 10);
 	printf("#show by base 16: ");
 	bi_show(teemo1, 16);
 	printf("\n\n");
@@ -599,7 +594,7 @@ void div_test()
 	}
 
 	int choose;
-	printf("Choose your work\n1. School book division \n2. School book Binary Long Division \n3. Multi-Pricision Long Division\n");
+	printf("Choose your work\n1. School book Binary Long Division \n2. Multi-Pricision Long Division\n");
 	scanf("%d", &choose);
 	bigint* A = NULL;
 	bigint* B = NULL;
@@ -611,45 +606,8 @@ void div_test()
 	if (choose == 1) {
 		int ran1;
 		int ran2;
-		// test for school book division
-		printf("# SAGE code\n");
-		printf("# SAGE code\n");
-		for (int i = 0; i < check; i++) {
-			while (1) {
-				ran1 = rand() % check;
-				ran2 = (ran1 + 1) % check;
 
-				bi_gen_rand(&A, 0, random[ran1]);
-				bi_gen_rand(&B, 0, random[ran2]);
 
-				if (Compare_ABS(A, B) >= 0)
-					break;
-			}
-
-			printf("x = 0x");
-			bi_show(A, 16);
-			printf("\n");
-			printf("y = 0x");
-			bi_show(B, 16);
-			printf("\n");
-
-			bi_sb_div(A, B, &Q, &R);
-
-			printf("Q = 0x");
-			bi_show(Q, 16);
-			printf("\n");
-			printf("R = 0x");
-			bi_show(R, 16);
-			printf("\n");
-
-			printf("print((x %% y == R) & (x // y) == Q)\n\n");
-		}
-
-	}
-	else if (choose == 2) {
-		int ran1;
-		int ran2;
-		// test for school book B_L_D
 		printf("# SAGE code\n");
 		for (int i = 0; i < check; i++) {
 			while (1) {
@@ -684,7 +642,7 @@ void div_test()
 
 
 	}
-	else if (choose == 3) {
+	else if (choose == 2) {
 		// test for multi-pricision Division
 		int ran1;
 		int ran2;
@@ -715,7 +673,6 @@ void div_test()
 			printf("\n");
 
 			printf("print((x %% y == R) & ((x // y) == Q))\n\n");
-			//printf("55555555555555555\n");
 
 		}
 
@@ -743,7 +700,7 @@ void mod_exp_test()
 		check = 50;
 		upper_limit = 50;
 		lower_limit = 30;
-		n = 5;
+		n = 2;
 		N = 10;
 	}
 	else {
@@ -751,11 +708,10 @@ void mod_exp_test()
 		scanf("%d", &upper_limit);
 		printf("enter lower limit: ");
 		scanf("%d", &lower_limit);
-		printf("\n");
-		printf("enter exponential number: ");
+		printf("enter exponential number's wordlen: ");
 		scanf("%d", &n);
-		printf("enter wordlen N: ");
-		scanf("%d", N);
+		printf("enter N's wordlen: ");
+		scanf("%d", &N);
 		printf("\n");
 	}
 
@@ -774,6 +730,7 @@ void mod_exp_test()
 	printf("Choose your work\n1. Left-to-Right\n2. Right-to-Left\n3. Multiply-and-Squaring\n");
 	scanf("%d", &choose);
 	bigint* A = NULL;
+	bigint* nn = NULL;
 	bigint* NN = NULL;
 
 	clock_t start = clock();
@@ -781,28 +738,33 @@ void mod_exp_test()
 	if(choose == 1) {
 		// Left-to-Right
 		printf("# SAGE code\n");
-		for(int i = 0; i < check; i++) {
-			bi_gen_rand(&A, 0, random[i]);
-			bi_gen_rand(&NN, 0, N);
+		for (int i = 0; i < check; i++) {
+			do
+			{
+				bi_gen_rand(&A, 0, random[i]);
+				bi_gen_rand(&NN, 0, N);
+				bi_gen_rand(&nn, 0, n);
+			} while (is_zero(A) == 0 || is_zero(NN) == 0 || is_zero(nn) == 0);
 
 			printf("x = 0x");
 			bi_show(A, 16);
 			printf("\n");
 
-			printf("n = %d\n", n);
+			printf("n = 0x");
+			bi_show(nn, 16);
+			printf("\n");
 
 			printf("N = 0x");
 			bi_show(NN, 16);
 			printf("\n");
 
-			L_t_R(&A, n, NN);
+			ModExp_LTR(&A, nn, NN);
 
 			printf("z = 0x");
 			bi_show(A, 16);
 			printf("\n");
 
-			printf("print((x**n) %% N == z)\n");
-
+			printf("print(power_mod(x, n, N) == z)\n");
 		}
 
 	}
@@ -810,26 +772,32 @@ void mod_exp_test()
 		// Right-to-Left
 		printf("# SAGE code\n");
 		for(int i = 0; i < check; i++) {
-			bi_gen_rand(&A, 0, random[i]);
-			bi_gen_rand(&NN, 0, N);
+			do
+			{
+				bi_gen_rand(&A, 0, random[i]);
+				bi_gen_rand(&NN, 0, N);
+				bi_gen_rand(&nn, 0, n);
+			} while (is_zero(A) == 0 || is_zero(NN) == 0 || is_zero(nn) == 0);
 
 			printf("x = 0x");
 			bi_show(A, 16);
 			printf("\n");
 
-			printf("n = %d\n", n);
+			printf("n = 0x");
+			bi_show(nn, 16);
+			printf("\n");
 
 			printf("N = 0x");
 			bi_show(NN, 16);
 			printf("\n");
 
-			R_t_L(&A, n, NN);
+			ModExp_RTL(&A, nn, NN);
 
 			printf("z = 0x");
 			bi_show(A, 16);
 			printf("\n");
 
-			printf("print((x**n) %% N == z)\n");
+			printf("print(power_mod(x, n, N) == z)\n");
 		}
 
 	}
@@ -837,26 +805,33 @@ void mod_exp_test()
 		// Multiply-and-Squaring
 		printf("# SAGE code\n");
 		for(int i = 0; i < check; i++) {
-			bi_gen_rand(&A, 0, random[i]);
-			bi_gen_rand(&NN, 0, N);
+			do
+			{
+				bi_gen_rand(&A, 0, random[i]);
+				bi_gen_rand(&NN, 0, N);
+				bi_gen_rand(&nn, 0, n);
+			} while (is_zero(A) == 0 || is_zero(NN) == 0 || is_zero(nn) == 0);
 
 			printf("x = 0x");
 			bi_show(A, 16);
 			printf("\n");
 
-			printf("n = %d\n", n);
+
+			printf("n = 0x");
+			bi_show(nn, 16);
+			printf("\n");
 
 			printf("N = 0x");
 			bi_show(NN, 16);
 			printf("\n");
 
-			M_n_S(&A, n, NN);
+			ModExp_Montgomery(&A, nn, NN);
 
 			printf("z = 0x");
 			bi_show(A, 16);
 			printf("\n");
 
-			printf("print((x**n) %% N == z)\n");
+			printf("print(power_mod(x, n, N) == z)\n");
 		}
 
 

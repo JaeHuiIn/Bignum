@@ -2,142 +2,108 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
-#define WORD_BITLEN 32
-
-#if WORD_BITLEN == 8
-typedef unsigned char word;
-#define WORD_MASK 0xff; 
-word arr[3] = { 0x12, 0x34, 0x56 };
-#elif WORD_BITLEN == 32
-typedef unsigned int word;
-#define WORD_MASK 0xffffffff; 
-word arr[3] = { 0x12345678, 0x9abc0123, 0x456789ab };
-#elif WORD_BITLEN == 64
-typedef unsigned long long word;
-#define WORD_MASK 0xffffffffffffffff; 
-word arr[3] = { 0x0123456789abcdef, 0x9abcedf012345678, 0xdef0123456789abc };
-#endif 
-
+#include "config.h"
 
 #define NON_NEGATIVE 0
 #define NEGATIVE 1
 
-#define ZERORIZE 0
 
-/////
-// basic function
-/* Dynamic Memory Allocation */
 typedef struct {
 
-	int sign;       // NEGATIVE or NON-NEGATIVE
-	int wordlen;    // wordlen >= 0
-	word* a;        // address for big integer
+	int sign;
+	int wordlen;
+	word* a;
 } bigint;
 
 void array_init(word* a, int wordlen);
 
-/* 2.1 Create BigInt, Delete BigInt, Zeroize BigInt */
+
 void bi_delete(bigint** x);
 void bi_new(bigint** x, int wordlen);
 
-/* 2.2 Set BigInt, Show BigInt */
-void bi_set_by_array(bigint** x, int sign, word* a, int wordlen);   // bigint x <- sign and array a
-void bi_set_by_string(bigint** x, int sign, char* a, int base); 
+
+void bi_set_by_array(bigint** x, int sign, word* a, int wordlen);
+void bi_set_by_string(bigint** x, int sign, char* a, int base);
 void bi_show(bigint* x, word base);
 
-/* 2.3 Refine BigInt (Remove Last Zero Words) */
+
 void bi_refine(bigint* x);
 
-/* 2.4 Assign BigInt */
+
 void array_copy(word y[], word x[], int wordlen);
 void bi_assign(bigint** y, bigint* x);
 
-/* 2.5 Generate Random BigInt */
+
 void array_rand(word* dst, int wordlen);
 void bi_gen_rand(bigint** x, int sign, int wordlen);
 
-/* 2.6 Get Word Lengh / Bit Length / j-th Bit of BigInt */
+
 int get_wordlen(bigint* x);
 int get_bitlen(bigint* x);
 int get_jth_bit(bigint* x, int j);
 
-/* 2.7 Get Sign and Flip Sign of BigInt */
+
 int bi_get_sign(bigint* x);
 void bi_flip_sign(bigint** x);
 
-/* 2.8 Set One, Set Zero, Is Zero, Is One */
+
 void bi_set_one(bigint** x);
 void bi_set_zero(bigint** x);
-int is_zero(bigint* x);  // 0이면 0을, 0이 아니면 1을 반환한다.
-int is_one(bigint* x);  // 1이면 1, 1이 아니면 0을 반환한다.
+int is_zero(bigint* x);
+int is_one(bigint* x);
 
-/* 2.9 Compare ABS, Compare AB*/
-int Compare_ABS(bigint* A, bigint* B); // 음이 아닌 정수 A, B의 대수 비교. A > B : 1 리턴, A = B : 0 리턴, A < B : -1 리턴 
+
+int Compare_ABS(bigint* A, bigint* B);
 int Compare_AB(bigint** A, bigint** B);
 
-/* 2.10 Left / Right Shift */
+
 void Left_Shift(bigint** x, int r);
 void Right_Shift(bigint** x, int r);
 
-/* 2.11 Reduction */
+
 void Reduction(bigint** A, int r);
 
 
-/////
-// 덧셈, 뺄셈 구현
-
-//bigint 덧셈
 void bi_add(bigint* x, bigint* y, bigint** C);
 void bi_self_add(bigint** x, bigint* y);
 
-// bigint 뺄셈
-void bi_subc(bigint* x, bigint*y, bigint ** C);  // x >= y > 0 에서 x - y
-void bi_sub(bigint* x, bigint*y, bigint** C);
+
+void bi_subc(bigint* x, bigint* y, bigint** C);
+void bi_sub(bigint* x, bigint* y, bigint** C);
 
 
-/////
-// 곱셈 구현
 void bi_mulc(word x, word y, bigint** C);
 void bi_mul(bigint* x, bigint* y, bigint** C);
 void bi_kmul(bigint* x, bigint* y, bigint** C, int flag);
 void bi_kmulc(bigint* x, bigint* y, bigint** C);
 void bi_squareC(word x, bigint** C);
 void bi_square(bigint* x, bigint** C);
+void bi_squaring(bigint* x, bigint** C);
 void bi_ksquaring(bigint* x, bigint** C, int flag);
 void bi_ksquaringC(bigint* x, bigint** C);
 
-/////
-// 나눗셈 구현
-// schoolbook division
+
 void bi_sb_div(bigint* A, bigint* B, bigint** Q, bigint** R);
-
-// schoolbook binary long division
 void Binary_Long_Division(bigint* A, bigint* B, bigint** Q, bigint** R);
-
-//word L_D_A(bigint* A, word B);  // Long Division Algorithm with 2 word
 void L_D_A(bigint* A, word B, bigint** Q);
 void bi_divcc(bigint* A, bigint* B, bigint** Q, bigint** R);
-
 void bi_divc(bigint* A, bigint* B, bigint** Q, bigint** R);
-
 void DIV(bigint* A, bigint* B, bigint** Q, bigint** R);
 
 
+void ModExp_LTR(bigint** x, bigint* n, bigint* N);
+void ModExp_RTL(bigint** x, bigint* n, bigint* N);
+void ModExp_Montgomery(bigint** x, bigint* n, bigint* N);
 
 
 
+void basic_test();
+void add_test();
+void sub_test();
+void mul_test();
+void div_test();
+void mod_exp_test();
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+void add_speed();

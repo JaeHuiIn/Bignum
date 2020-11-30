@@ -1,7 +1,6 @@
-#include "bignum_add_sub.h"
-// 덧셈과 뺄셈 구현
+#include "bignum_all_header.h"
 
-// bigint 덧셈
+// 덧셈 수행
 void bi_add(bigint* x, bigint* y, bigint** C)
 {
 	if(x->sign != NEGATIVE && y->sign == NEGATIVE) {

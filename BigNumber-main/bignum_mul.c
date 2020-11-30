@@ -1,4 +1,4 @@
-#include "bignum_add_sub.c"
+#include "bignum_all_header.h"
 
 void bi_mulc(word x, word y, bigint** C)
 {

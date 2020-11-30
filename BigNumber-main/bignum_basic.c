@@ -159,7 +159,38 @@ void bi_show(bigint* x, word base)
 	}
 	else if (base == 10)
 	{
-		// NEED TO IMPLEMENT!!
+		bigint* TEN = NULL;
+		bi_new(&TEN, 1);
+		TEN->a[0] = 10;
+		word tenten[200000] = {0, }; 
+		int j = 0;
+		bigint* x_temp = NULL;
+		bigint* Q = NULL;
+		bigint* R = NULL;
+		bi_assign(&x_temp, x);
+
+
+		while(is_zero(x_temp) != 0){
+			DIV(x_temp, TEN, &Q, &R);
+
+			tenten[j] = R->a[0];
+			j += 1;
+
+			bi_assign(&x_temp, Q);
+
+		}
+		// j - 1 은 10진수로 표현되는 마지막 자리수의 인덱스를 의미한다.
+		
+		
+		for(int i = j - 1; i >= 0; i--) {
+			printf("%d", tenten[i]);
+		}
+
+
+		bi_delete(&x_temp);
+		bi_delete(&Q);
+		bi_delete(&R);
+	
 	}
 	else if (base == 16)
 	{

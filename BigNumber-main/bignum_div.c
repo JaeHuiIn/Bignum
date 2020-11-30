@@ -1,4 +1,4 @@
-#include "bignum_div.h"
+#include "bignum_all_header.h"
 
 void bi_sb_div(bigint* A, bigint* B, bigint** Q, bigint** R)	// schoolbook division
 {
@@ -100,6 +100,9 @@ void L_D_A(bigint* A, word B, bigint** Q)   // 함수의 자료형으로 word �
 			}
 		}
 	}
+
+
+	bi_delete(&R);
 }
 
 void bi_divcc(bigint* A, bigint* B, bigint** Q, bigint** R) // 0 <= R < B, Q \in 0 ~ W 인 Q, R를 어떻게 반환할지 잘 생각해보기
