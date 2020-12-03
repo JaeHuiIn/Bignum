@@ -41,11 +41,12 @@ void bi_mulc(word x, word y, bigint** C)
 void bi_mul(bigint* x, bigint* y, bigint** C)
 {
 	bigint* C_word = NULL;  // singhle pricision을 저장하는 bigint 구조체
+	bigint* Copy_C = NULL;
 	bigint* add_C = NULL;
 
 	int max_len = x->wordlen + y->wordlen;  //C의 최대 길이
 	
-	// 곱셈 결과를 저장할 C를 max_len 길이로 초기화
+	bi_new(&Copy_C, max_len);   // 곱셈 결과를 저장할 C를 max_len 길이로 초기화
 	bi_new(&add_C, max_len);
 	for (int i = 0; i < x->wordlen; i++)
 	{
@@ -54,18 +55,20 @@ void bi_mul(bigint* x, bigint* y, bigint** C)
 			bi_new(&C_word, 2);     // 2개의 워드를 저장할 수 있는 공간 할당.
 			bi_mulc(x->a[i], y->a[j], &C_word);          // 한 워드씩 곱
 			Left_Shift(&C_word, WORD_BITLEN * (i + j));  // 제대로 된 위치로 설정
-			bi_self_add(&add_C, C_word);
+			bi_add(C_word, add_C, &Copy_C);
+			bi_assign(&add_C, Copy_C);
 		}
 	}
 	if (x->sign == y->sign)         //부호 맞추기
-		add_C->sign = NON_NEGATIVE;
+		Copy_C->sign = NON_NEGATIVE;
 	else
-		add_C->sign = NEGATIVE;
-	bi_refine(add_C);
-	bi_assign(C, add_C);
+		Copy_C->sign = NEGATIVE;
+	bi_refine(Copy_C);
+	bi_assign(C, Copy_C);
 
 	bi_delete(&add_C);
 	bi_delete(&C_word);
+	bi_delete(&Copy_C);
 }
 
 void bi_kmul(bigint* x, bigint* y, bigint** C, int flag)
@@ -143,24 +146,20 @@ void bi_kmul(bigint* x, bigint* y, bigint** C, int flag)
 	S->sign = S_sign;
 
 
-	//bigint* Copy_S = NULL;
-	//bigint* Copy_SS = NULL;	
-	bi_self_add(&S, T1);
-	bi_self_add(&S, T0);
-	//bi_assign(&Copy_S, S);
-	//bi_add(Copy_S, T1, &S);
-	//bi_assign(&Copy_SS, S);
-	//bi_add(Copy_SS, T0, &S);
-	
+	bigint* Copy_S = NULL;
+	bigint* Copy_SS = NULL;	
+	bi_assign(&Copy_S, S);
+	bi_add(Copy_S, T1, &S);
+	bi_assign(&Copy_SS, S);
+	bi_add(Copy_SS, T0, &S);
 	// printf("print(0x");bi_show(Copy_SS, 16); printf(" + 0x"); bi_show(T0, 16); printf(" == 0x"); bi_show(S, 16); printf(")\n");
 	//printf("print("); bi_show(S,16); printf(" << %d == ", lw);
 	Left_Shift(&S, lw);
 	//bi_show(S, 16); printf(")\n");
 
-	//bigint* Copy_R = NULL;
-	bi_self_add(&R, S);
-	//bi_assign(&Copy_R, R);
-	//bi_add(Copy_R, S, &R);
+	bigint* Copy_R = NULL;
+	bi_assign(&Copy_R, R);
+	bi_add(Copy_R, S, &R);
 	bi_refine(R);
 	bi_assign(C, R); 
 
@@ -175,9 +174,9 @@ void bi_kmul(bigint* x, bigint* y, bigint** C, int flag)
 	bi_delete(&S1);
 	bi_delete(&S);
 	bi_delete(&Copy_T1);
-	//bi_delete(&Copy_S);
-	//bi_delete(&Copy_SS);
-	//bi_delete(&Copy_R);
+	bi_delete(&Copy_S);
+	bi_delete(&Copy_SS);
+	bi_delete(&Copy_R);
 }
 
 void bi_kmulc(bigint* x, bigint* y, bigint** C)

@@ -11,4 +11,4 @@ typedef unsigned long long word;
 #define WORD_MASK 0xffffffffffffffff; 
 #endif 
 
-#define ZERORIZE 
+#define ZERORIZE  

@@ -3,12 +3,14 @@
 void ModExp_LTR(bigint** x, bigint* n, bigint* N)    // x^n mod N
 {
 	bigint* t = NULL;
+	bigint* x_temp = NULL;
+	bigint* t_temp = NULL;
+	bigint* Q_temp = NULL;
+	bigint* R_temp = NULL;
+	bi_assign(&x_temp, *x);
 	bi_set_one(&t); // t <- 1
-
 	word one = 1ULL << (WORD_BITLEN - 1);
-	int bit[2049] = { 0, };  // n의 비트열을 담을 행렬 선언
 	int j = n->wordlen * WORD_BITLEN;
-	int k;
 	while (1)
 	{
 		if ((n->a[(n->wordlen) - 1] & one) - one == 0)
@@ -16,34 +18,23 @@ void ModExp_LTR(bigint** x, bigint* n, bigint* N)    // x^n mod N
 		one = one >> 1;
 		j--;
 	}
-	for(int m = 0; m <j;m++)
-	{
-		bit[m] = n->a[0] & 0x01;
-		Right_Shift(&n, 1);
-	}
-
 	// x를 저장하는 임시변수
-	bigint* x_temp = NULL;
-	bi_assign(&x_temp, *x);
-	bigint* t_temp = NULL;
-	bigint* Q_temp = NULL;
-	bigint* R_temp = NULL;
+
 	for (int i = j-1; i >= 0; i--) {
-		k = i / WORD_BITLEN;
-		bi_set_zero(&t_temp);
 		bi_squaring(t, &t_temp);  // t_temp = t^2
 		DIV(t_temp, N, &Q_temp, &R_temp);  // t_temp mod N (t^2 mod N)
 		bi_assign(&t_temp, R_temp);
-		if ((bit[i] & 0x01) == 1) {
+		if (get_jth_bit(n, i) == 1) {
 			bi_mul(t_temp, x_temp, &t);  // t = t_temp * x 
 			DIV(t, N, &Q_temp, &R_temp);       // t mod N ( t^2 * x mod N)
 			bi_assign(&t, R_temp);
 		}
 		else
-			bi_assign(&t, t_temp);
+		{
+			DIV(t_temp, N, &Q_temp, &R_temp);       // t mod N ( t^2 * x mod N)
+			bi_assign(&t, R_temp);
+		}
 	}
-	DIV(t, N, &Q_temp, &R_temp);
-	bi_assign(&t, R_temp);
 	bi_assign(x, t);
 	bi_delete(&t);
 	bi_delete(&x_temp);
@@ -105,7 +96,6 @@ void ModExp_Montgomery(bigint** x, bigint* n, bigint* N)
 	bi_assign(&t1, *x); // t1 <- x
 
 	word one = 1ULL << (WORD_BITLEN - 1);
-	int bit[2049] = { 0, };  // n의 비트열을 담을 행렬 선언
 	int j = n->wordlen * WORD_BITLEN;
 	int k;
 	while (1)
@@ -115,17 +105,11 @@ void ModExp_Montgomery(bigint** x, bigint* n, bigint* N)
 		one = one >> 1;
 		j--;
 	}
-	for (int m = 0; m < j; m++)
-	{
-		bit[m] = n->a[0] & 0x01;
-		Right_Shift(&n, 1);
-	}
+
 	// j 는 n의 비트열 길이를 의미한다. j - 1 은 bit[]에서 MSB가 위치한 곳의 인덱스가 된다.  
 
 	for (int i = j - 1; i >= 0; i--) {
-
-
-		if (bit[i] == 0) {
+		if (get_jth_bit(n, i) == 0) {
 			// t1 <- t0 * t1
 			bi_assign(&t1_temp, t1);
 			bi_mul(t0, t1_temp, &t1);

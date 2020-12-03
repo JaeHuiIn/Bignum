@@ -1,7 +1,551 @@
 #include "bignum_all_header.h"
 
+void bignumber_test()
+{
+	while(1) {
+		system("cls");
+		int choose;
+		printf("Choose your work\n");
+		printf("Press 1 to check speed\n");
+		printf("Press 2 to check accuracy\n");
+		printf("Press 3 to calculate\n");
+		printf("Press 4 to EXIT\n");
+		printf("Press: ");
+		scanf("%d", &choose);
+		printf("\n\n");	
+
+		if(choose == 1) {	// check time
+			speed_check();
+		}
+		else if(choose == 2) {	// check accuracy
+			accuracy_check();
+
+		}
+		else if(choose == 3) {
+			calculate_bignumber();
+		}
+		else if(choose == 4)
+			break;
+		else 
+			printf("You choose wrong number\n");
+	
+	}
+
+}
+
+
+void speed_check()
+{
+	while(1) {
+		system("cls");
+		int select;
+		printf("Select a function to check speed\n");
+		printf("1. ADD\n2. SUB\n3. schoolbook MUL\n");
+        printf("4. karatsuba MUL\n5. schoolbook SQUARING\n6. karatsuba SQUARING\n");
+        printf("7. binary-long-division\n8. multi-precision-division\n9. EXIT\n");
+		printf("Select: ");
+		scanf("%d", &select);
+		switch (select) {
+			case 1:
+				add_speed();
+				break;
+			case 2:
+				sub_speed();
+				break;	
+			case 3:
+				schoolbook_mul_speed();
+				break;
+			case 4:
+				karatsuba_mul_speed();
+				break;
+			case 5:
+				Schoolbook_Squaring_speed();
+				break;
+			case 6:
+                Karatsuba_Squaring_speed();
+				break;
+            case 7:
+                Binary_Long_Division_speed();
+                break;
+            case 8:
+                Multiprecision_Division_speed();
+                break;
+            case 9: 
+                break;
+			default:
+				printf("You choose wrong number\n");
+				break;
+	
+		}
+		if(select == 9)
+				break;
+	}
+
+}
+
+void accuracy_check()
+{
+	while(1){
+		system("cls");
+		int select;
+		printf("You can check accuracy by SAGE\n");
+		printf("Select function to check accuracy\n");
+		printf("1. basic function\n2. ADD\n3. SUB\n4. MUL\n5. DIV\n6. MOD_EXP\n7. EXIT\n");
+		printf("Select: ");
+		scanf("%d", &select);
+
+		switch (select) {
+			case 1:
+				basic_test();
+				break;
+			case 2:
+				add_test();
+				break;
+			case 3:
+				sub_test();
+				break;	
+			case 4:
+				mul_test();
+				break;
+			case 5:
+				div_test();
+				break;
+			case 6:
+				mod_exp_test();
+				break;
+			case 7:
+				break;
+			default:
+				printf("You choose wrong number\n");
+				system("pause");
+				break;
+		
+			
+		}
+		if(select == 7)
+			break;
+
+	}
+
+}
+
+void calculate_bignumber()
+{
+	while(1) {
+		system("cls");
+		int select;
+		printf("Select a function to execute\n");
+		printf("1. ADD\n2. SUB\n3. MUL\n4. DIV\n5. MOD_EXP\n6. EXIT\n");
+		printf("Select: ");
+		scanf("%d", &select);
+		switch (select) {
+			case 1:
+				calculate_add();
+				break;
+			case 2:
+				calculate_sub();
+				break;	
+			case 3:
+				calculate_mul();
+				break;
+			case 4:
+				calculate_div();
+				break;
+			case 5:
+				calculate_mod_exp();
+				break;
+			case 6:
+				break;
+			default:
+				printf("You choose wrong number\n");
+				break;
+	
+		}
+		if(select == 6)
+			break;
+	}
+
+}
+
+
+
+void add_speed()
+{
+    int check;  // 테스트 데이터 쌍 개수
+    int first_number_wordlen;   // 첫번째 bigint의 워드길이
+    int second_number_wordlen;  // 두번째 bigint의 워드길이
+
+	system("cls");
+    printf("Enter number for checks(1 for basic setting): ");
+    scanf("%d", &check);
+	if(check == 1) {
+		check = 10000;
+		first_number_wordlen = 100;
+		second_number_wordlen = 40;
+	}
+	else {
+	    printf("Enter number for first number's wordlen: ");
+    	scanf("%d", &first_number_wordlen);
+    	printf("Enter number for second number's wordlen: ");
+    	scanf("%d", &second_number_wordlen);
+	}
+
+    bigint* A = NULL;
+    bigint* B = NULL;
+    bigint* C = NULL;
+    bi_gen_rand(&A, 0, first_number_wordlen);
+    bi_gen_rand(&B, 0, second_number_wordlen);
+
+    clock_t start, end; // 시간 측정용 변수
+
+    start = clock();    // 측정 시작
+    for(int i = 0; i < check / 3; i++){
+        bi_add(A, B, &C);   
+        bi_add(C, A, &B);
+        bi_add(B, C, &A);
+    }
+    end = clock();      // 측정 종료
+
+    printf("Add function Time: %lf\n", (double)(end - start) / CLOCKS_PER_SEC);
+	system("pause");
+
+    bi_delete(&A);
+    bi_delete(&B);
+    bi_delete(&C);
+}
+
+void sub_speed()
+{
+	system("cls");
+    int check;  // 테스트 데이터 쌍 개수
+    int first_number_wordlen;   // 첫번째 bigint의 워드길이
+    int second_number_wordlen;  // 두번째 bigint의 워드길이
+
+    printf("Enter number for checks(1 for basic setting): ");
+    scanf("%d", &check);
+    if(check == 1) {
+		check = 10000;
+		first_number_wordlen = 100;
+		second_number_wordlen = 40;
+	}
+	else {
+	    printf("Enter number for first number's wordlen: ");
+    	scanf("%d", &first_number_wordlen);
+    	printf("Enter number for second number's wordlen: ");
+    	scanf("%d", &second_number_wordlen);
+	}
+
+    bigint* A = NULL;
+    bigint* B = NULL;
+    bigint* C = NULL;
+    bi_gen_rand(&A, 0, first_number_wordlen);
+    bi_gen_rand(&B, 0, second_number_wordlen);
+
+    clock_t start, end; // 시간 측정용 변수
+
+    start = clock();    // 측정 시작
+    for(int i = 0; i < check / 3; i++) {
+        bi_sub(A, B, &C);   
+        bi_sub(C, A, &B);
+        bi_sub(B, C, &A);
+    }
+    end = clock();
+
+    printf("Sub function Time: %lf\n", (double)(end - start) / CLOCKS_PER_SEC);
+	system("pause");
+
+    bi_delete(&A);
+    bi_delete(&B);
+    bi_delete(&C);
+    
+}
+
+
+void schoolbook_mul_speed()
+{
+	system("cls");
+    int check;  // 테스트 데이터 쌍 개수
+    int first_number_wordlen;   // 첫번째 bigint의 워드길이
+    int second_number_wordlen;  // 두번째 bigint의 워드길이
+
+    printf("Enter number for checks(1 for basic setting): ");
+    scanf("%d", &check);
+    if(check == 1) {
+		check = 1000;
+		first_number_wordlen = 100;
+		second_number_wordlen = 40;
+	}
+	else {
+	    printf("Enter number for first number's wordlen: ");
+    	scanf("%d", &first_number_wordlen);
+    	printf("Enter number for second number's wordlen: ");
+    	scanf("%d", &second_number_wordlen);
+	}
+
+    bigint* A = NULL;
+    bigint* B = NULL;
+    bigint* C = NULL;
+    bi_gen_rand(&A, 0, first_number_wordlen);
+    bi_gen_rand(&B, 0, second_number_wordlen);
+
+    clock_t start, end; // 시간 측정용 변수
+
+    start = clock();    // 측정 시작
+	// int checks[4] = {0, };
+    for(int i = 0; i < check; i++) {
+		/*
+		if(check / (i + 1) >= 90 && checks[0] == 0){
+			system("cls");
+			printf("%d%%", 10);
+			checks[0] = 1;
+		}
+		else if(check / (i + 1) >= 70 && checks[1] == 0){
+			system("cls");
+			printf("%d%%", 30);
+			checks[1] = 1;			
+		}
+		else if(check / (i + 1) >= 50 && checks[2] == 0){
+			system("cls");
+			printf("%d%%", 50);
+			checks[2] = 1;
+		}
+		else if(check / (i + 1) >= 10 && checks[3] == 0){
+			system("cls");
+			printf("%d%%", 90);
+			checks[3] = 1;
+		}*/
+
+        bi_mul(A, B, &C);
+    }
+    end = clock();
+
+	system("cls");
+    printf("Schoolbook multiplication Time: %lf\n", (double)(end - start) / CLOCKS_PER_SEC);
+	system("pause");
+
+    bi_delete(&A);
+    bi_delete(&B);
+    bi_delete(&C);
+}
+
+void karatsuba_mul_speed()
+{
+	system("cls");
+    int check;  // 테스트 데이터 쌍 개수
+    int first_number_wordlen;   // 첫번째 bigint의 워드길이
+    int second_number_wordlen;  // 두번째 bigint의 워드길이
+
+    printf("Enter number for checks(1 for basic setting): ");
+    scanf("%d", &check);
+    if(check == 1) {
+		check = 1000;
+		first_number_wordlen = 100;
+		second_number_wordlen = 40;
+	}
+	else {
+	    printf("Enter number for first number's wordlen: ");
+    	scanf("%d", &first_number_wordlen);
+    	printf("Enter number for second number's wordlen: ");
+    	scanf("%d", &second_number_wordlen);
+	}
+
+    bigint* A = NULL;
+    bigint* B = NULL;
+    bigint* C = NULL;
+    bi_gen_rand(&A, 0, first_number_wordlen);
+    bi_gen_rand(&B, 0, second_number_wordlen);
+
+    clock_t start, end; // 시간 측정용 변수
+
+    start = clock();    // 측정 시작
+	
+    for(int i = 0; i < check; i++) {
+		
+
+        bi_kmulc(A, B, &C);
+    }
+    end = clock();
+
+    printf("Karatsuba multiplication Time: %lf\n", (double)(end - start) / CLOCKS_PER_SEC);
+	system("pause");
+
+    bi_delete(&A);
+    bi_delete(&B);
+    bi_delete(&C);
+}
+
+void Schoolbook_Squaring_speed()
+{
+	system("cls");
+    int check;  // 테스트 데이터 쌍 개수
+    int first_number_wordlen;   // 첫번째 bigint의 워드길이
+
+    printf("Enter number for checks(1 for basic setting): ");
+    scanf("%d", &check);
+    if(check == 1) {
+		check = 1000;
+		first_number_wordlen = 100;
+	}
+	else {
+	    printf("Enter number for first number's wordlen: ");
+    	scanf("%d", &first_number_wordlen);
+	}
+
+    bigint* A = NULL;
+    bigint* B = NULL;
+    bi_gen_rand(&A, 0, first_number_wordlen);
+
+    clock_t start, end; // 시간 측정용 변수
+
+    start = clock();
+    for(int i = 0; i < check; i++){
+        bi_squaring(A, &B);
+    }
+    end = clock();
+
+    printf("Schoolbook Squaring Time: %lf\n", (double)(end - start) / CLOCKS_PER_SEC);
+	system("pause");
+
+    bi_delete(&A);
+    bi_delete(&B);    
+
+}
+
+void Karatsuba_Squaring_speed()
+{
+	system("cls");
+    int check;  // 테스트 데이터 쌍 개수
+    int first_number_wordlen;   // 첫번째 bigint의 워드길이
+
+    printf("Enter number for checks(1 for basic setting): ");
+    scanf("%d", &check);
+    if(check == 1) {
+		check = 1000;
+		first_number_wordlen = 100;
+	}
+	else {
+	    printf("Enter number for first number's wordlen: ");
+    	scanf("%d", &first_number_wordlen);
+	}
+
+    bigint* A = NULL;
+    bigint* B = NULL;
+    bi_gen_rand(&A, 0, first_number_wordlen);
+
+    clock_t start, end; // 시간 측정용 변수
+
+    start = clock();
+    for(int i = 0; i < check; i++){
+        bi_ksquaringC(A, &B);
+    }
+    end = clock();
+
+    printf("Karatsuba Squaring Time: %lf\n", (double)(end - start) / CLOCKS_PER_SEC);
+	system("pause");
+
+    bi_delete(&A);
+    bi_delete(&B);
+}
+
+void Binary_Long_Division_speed()
+{
+	system("cls");	
+    int check;  // 테스트 데이터 쌍 개수
+    int first_number_wordlen;   // 첫번째 bigint의 워드길이
+    int second_number_wordlen;  // 두번째 bigint의 워드길이
+
+    printf("Enter number for checks(1 for basic setting): ");
+    scanf("%d", &check);
+    if(check == 1) {
+		check = 1000;
+		first_number_wordlen = 100;
+		second_number_wordlen = 40;
+	}
+	else {
+	    printf("Enter number for first number's wordlen: ");
+    	scanf("%d", &first_number_wordlen);
+    	printf("Enter number for second number's wordlen: ");
+    	scanf("%d", &second_number_wordlen);
+	}
+
+    bigint* A = NULL;
+    bigint* B = NULL;
+    bigint* Q = NULL;
+    bigint* R = NULL;
+    bi_gen_rand(&A, 0, first_number_wordlen);
+    bi_gen_rand(&B, 0, second_number_wordlen);
+
+    clock_t start, end; // 시간 측정용 변수
+
+    start = clock();    // 측정 시작
+    for(int i = 0; i < check; i++) {
+        Binary_Long_Division(A, B, &Q, &R);
+    }
+    end = clock();
+
+    printf("Binary Lond Division Time: %lf\n", (double)(end - start) / CLOCKS_PER_SEC);
+	system("pause");
+
+    bi_delete(&A);
+    bi_delete(&B);
+    bi_delete(&Q);
+    bi_delete(&R);
+
+}
+
+
+void Multiprecision_Division_speed()
+{
+	system("cls");
+    int check;  // 테스트 데이터 쌍 개수
+    int first_number_wordlen;   // 첫번째 bigint의 워드길이
+    int second_number_wordlen;  // 두번째 bigint의 워드길이
+
+    printf("Enter number for checks(1 for basic setting): ");
+    scanf("%d", &check);
+    if(check == 1) {
+		check = 1000;
+		first_number_wordlen = 100;
+		second_number_wordlen = 40;
+	}
+	else {
+	    printf("Enter number for first number's wordlen: ");
+    	scanf("%d", &first_number_wordlen);
+    	printf("Enter number for second number's wordlen: ");
+    	scanf("%d", &second_number_wordlen);
+	}
+
+    bigint* A = NULL;
+    bigint* B = NULL;
+    bigint* Q = NULL;
+    bigint* R = NULL;
+    bi_gen_rand(&A, 0, first_number_wordlen);
+    bi_gen_rand(&B, 0, second_number_wordlen);
+
+    clock_t start, end; // 시간 측정용 변수
+
+    start = clock();    // 측정 시작
+    for(int i = 0; i < check; i++) {
+        DIV(A, B, &Q, &R);
+    }
+    end = clock();
+
+    printf("Multi-precision Division Time: %lf\n", (double)(end - start) / CLOCKS_PER_SEC);
+	system("pause");
+
+    bi_delete(&A);
+    bi_delete(&B);
+    bi_delete(&Q);
+    bi_delete(&R);
+
+}
+
+
+
+
 void basic_test()
 {
+	system("cls");
 	bigint* teemo1 = NULL;
 	bigint* teemo2 = NULL;
 	bigint* teemo3 = NULL;
@@ -146,6 +690,8 @@ void basic_test()
 	printf("reduction = %d\n", reduction);
 	printf("print(x%%2**reduction == y)\n\n");
 
+	system("pause");
+
 	bi_delete(&teemo1);
 	bi_delete(&teemo2);
 	bi_delete(&teemo3);
@@ -154,6 +700,7 @@ void basic_test()
 
 void add_test()
 {
+	system("cls");
 	int check, upper_limit, lower_limit;
 	printf("enter number for check(press 1 for basic setting): ");
 	scanf("%d", &check);
@@ -220,7 +767,6 @@ void add_test()
 			printf("y = -0x");
 			bi_show(a1, 16);
 			printf("\n");
-			bi_flip_sign(&a1);
 		}
 
 		bi_add(a0, a1, &t0);
@@ -245,10 +791,13 @@ void add_test()
 
 	}
 
+	system("pause");
+
 }
 
 void sub_test()
 {
+	system("cls");
 	int check, upper_limit, lower_limit;
 	printf("enter number for check(press 1 for basic setting): ");
 	scanf("%d", &check);
@@ -340,10 +889,13 @@ void sub_test()
 
 	}
 
+	system("pause");
+
 }
 
 void mul_test()
 {
+	system("cls");
 	int check, upper_limit, lower_limit;
 	printf("enter number for check(press 1 for basic setting): ");
 	scanf("%d", &check);
@@ -381,7 +933,6 @@ void mul_test()
 	bigint* a0 = NULL;
 	bigint* a1 = NULL;
 	bigint* t0 = NULL;
-	clock_t start = clock();
 	if (choose == 1) {
 		// test for School book multiplication
 		printf("# SAGE code\n");
@@ -554,17 +1105,18 @@ void mul_test()
 	else
 		printf("you choose wrong number\n");
 
-	clock_t end = clock();
-	printf("Time : %lf\n", (double)(end - start) / CLOCKS_PER_SEC);
 
 	bi_delete(&a0);
 	bi_delete(&a1);
 	bi_delete(&t0);
 
+	system("pause");
+
 }
 
 void div_test()
 {
+	system("cls");
 	int check, upper_limit, lower_limit;
 	printf("enter number for check(press 1 for basic setting): ");
 	scanf("%d", &check);
@@ -600,7 +1152,6 @@ void div_test()
 	bigint* B = NULL;
 	bigint* Q = NULL;
 	bigint* R = NULL;
-	clock_t start = clock();
 
 
 	if (choose == 1) {
@@ -637,7 +1188,7 @@ void div_test()
 			bi_show(R, 16);
 			printf("\n");
 
-			printf("print((x %% y == R) & (x // y) == Q)\n\n");
+			printf("print((x %% y == R) and (x // y) == Q)\n\n");
 		}
 
 
@@ -672,7 +1223,7 @@ void div_test()
 			bi_show(R, 16);
 			printf("\n");
 
-			printf("print((x %% y == R) & ((x // y) == Q))\n\n");
+			printf("print((x %% y == R) and ((x // y) == Q))\n\n");
 
 		}
 
@@ -681,18 +1232,19 @@ void div_test()
 	else
 		printf("You choose wrong number\n");
 	
-	clock_t end = clock();
-	printf("Time : %lf\n", (double)(end - start) / CLOCKS_PER_SEC);
-
+	
 	bi_delete(&A);
 	bi_delete(&B);
 	bi_delete(&Q);
 	bi_delete(&R);
 
+	system("pause");
+
 }
 
 void mod_exp_test()
 {
+	system("cls");
 	int check, upper_limit, lower_limit, n, N;
 	printf("enter number for check(press 1 for basic setting): ");
 	scanf("%d", &check);
@@ -733,7 +1285,6 @@ void mod_exp_test()
 	bigint* nn = NULL;
 	bigint* NN = NULL;
 
-	clock_t start = clock();
 
 	if(choose == 1) {
 		// Left-to-Right
@@ -744,8 +1295,7 @@ void mod_exp_test()
 				bi_gen_rand(&A, 0, random[i]);
 				bi_gen_rand(&NN, 0, N);
 				bi_gen_rand(&nn, 0, n);
-			} while (is_zero(A) == 0 || is_zero(NN) == 0 || is_zero(nn) == 0);
-
+			}while (is_zero(A) == 0 || is_zero(NN) == 0 || is_zero(nn) == 0);
 			printf("x = 0x");
 			bi_show(A, 16);
 			printf("\n");
@@ -764,7 +1314,7 @@ void mod_exp_test()
 			bi_show(A, 16);
 			printf("\n");
 
-			printf("print(power_mod(x, n, N) == z)\n");
+			printf("print(power_mod(x, n, N) == z)\n\n");
 		}
 
 	}
@@ -797,7 +1347,7 @@ void mod_exp_test()
 			bi_show(A, 16);
 			printf("\n");
 
-			printf("print(power_mod(x, n, N) == z)\n");
+			printf("print(power_mod(x, n, N) == z)\n\n");
 		}
 
 	}
@@ -831,25 +1381,279 @@ void mod_exp_test()
 			bi_show(A, 16);
 			printf("\n");
 
-			printf("print(power_mod(x, n, N) == z)\n");
+			printf("print(power_mod(x, n, N) == z)\n\n");
 		}
 
 
 	}
 	else
 		printf("You choose wrong number\n");
-	
-
-
-
-
-
-
-	clock_t end = clock();
-	printf("Time : %lf\n", (double)(end - start) / CLOCKS_PER_SEC);
 
 	bi_delete(&A);
 	bi_delete(&NN);
+	bi_delete(&nn);
+
+	system("pause");
+
+
 }
+
+
+
+void calculate_add()
+{
+	system("cls");
+	printf("Choose string base size\n");
+	printf("1. Base 2\n2. Base 10\n3. Base 16\n");
+	int base;
+	scanf("Enter Base: %d", &base);
+	printf("Enter frist big number by string: ");
+	/*
+	첫번째 빅넘버 문자열 입력 구현 필요
+	*/
+	char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+	printf("Enter second big number by string: ");
+	/*
+	두번째 빅넘버 문자열 입력 구현 필요
+	*/
+	char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+
+	bigint* A = NULL;
+	bigint* B = NULL;
+	bigint* C = NULL;
+
+	int sign1, sign2;
+	printf("set sign of A and B\n");
+	scanf("Sign of A: %d", &sign1);
+	scanf("Sign of B: %d", &sign2);
+	bi_set_by_string(&A, sign1, str1, base);
+	bi_set_by_string(&B, sign2, str2, base);
+
+	printf("result: ");
+	bi_add(A, B, &C);
+	bi_show(C, base);
+
+	bi_delete(&A);
+	bi_delete(&B);
+	bi_delete(&C);
+
+	system("pause");
+}
+
+
+void calculate_sub()
+{
+	system("cls");
+	printf("Choose string base size\n");
+	printf("1. Base 2\n2. Base 10\n3. Base 16\n");
+	int base;
+	scanf("Enter Base: %d", &base);
+	printf("Enter frist big number by string: ");
+	/*
+	첫번째 빅넘버 문자열 입력 구현 필요
+	*/
+	char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+	printf("Enter second big number by string: ");
+	/*
+	두번째 빅넘버 문자열 입력 구현 필요
+	*/
+	char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+
+	bigint* A = NULL;
+	bigint* B = NULL;
+	bigint* C = NULL;
+
+	int sign1, sign2;
+	printf("set sign of A and B\n");
+	scanf("Sign of A: %d", &sign1);
+	scanf("Sign of B: %d", &sign2);
+	bi_set_by_string(&A, sign1, str1, base);
+	bi_set_by_string(&B, sign2, str2, base);
+
+	printf("result: ");
+	bi_sub(A, B, &C);
+	bi_show(C, base);
+
+	bi_delete(&A);
+	bi_delete(&B);
+	bi_delete(&C);
+
+	system("pause");
+}
+
+
+void calculate_mul()
+{
+	system("cls");
+	printf("Choose string base size\n");
+	printf("1. Base 2\n2. Base 10\n3. Base 16\n");
+	int base;
+	scanf("Enter Base: %d", &base);
+
+	printf("Press 1 for Karatsuba Multiplication\n");
+	printf("Press 2 for karatsuba Squaring\n");
+	int press;
+	scanf("Enter: %d", &press);
+
+	if(press == 1){
+		printf("Enter frist big number by string: ");
+		/*
+		첫번째 빅넘버 문자열 입력 구현 필요
+		*/
+		char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+		printf("Enter second big number by string: ");
+		/*
+		두번째 빅넘버 문자열 입력 구현 필요
+		*/
+		char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+
+		bigint* A = NULL;
+		bigint* B = NULL;
+		bigint* C = NULL;
+
+		int sign1, sign2;
+
+		printf("set sign of A and B\n");
+		scanf("Sign of A: %d", &sign1);
+		scanf("Sign of B: %d", &sign2);
+		bi_set_by_string(&A, sign1, str1, base);
+		bi_set_by_string(&B, sign2, str2, base);
+
+
+
+		printf("result: ");
+		bi_kmulc(A, B, &C);
+		bi_show(C, base);
+
+		bi_delete(&A);
+		bi_delete(&B);
+		bi_delete(&C);
+
+
+	}
+	else if(press == 2){
+		printf("Enter frist big number by string: ");
+		/*
+		첫번째 빅넘버 문자열 입력 구현 필요
+		*/
+		char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+		
+		bigint* A = NULL;
+		bigint* B = NULL;
+
+		bi_set_by_string(&A, 0, str1, base);
+
+		printf("result: ");
+		bi_ksquaringC(A, &B);
+		bi_show(B, base);
+
+		bi_delete(&A);
+		bi_delete(&B);
+	}
+
+	system("pause");
+
+}
+
+
+void calculate_div()
+{
+	printf("Choose string base size\n");
+	printf("1. Base 2\n2. Base 10\n3. Base 16\n");
+	int base;
+	scanf("Enter Base: %d", &base);
+	printf("Enter frist big number by string: ");
+	/*
+	첫번째 빅넘버 문자열 입력 구현 필요
+	*/
+	char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+	printf("Enter second big number by string: ");
+	/*
+	두번째 빅넘버 문자열 입력 구현 필요
+	*/
+	char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+
+	bigint* A = NULL;
+	bigint* B = NULL;
+	bigint* Q = NULL;
+	bigint* R = NULL;
+
+	bi_set_by_string(&A, 0, str1, base);
+	bi_set_by_string(&B, 0, str2, base);
+
+	printf("result\n");
+	DIV(A, B, &Q, &R);
+	printf("Q: ");
+	bi_show(Q, base);
+	printf("\nR: ");
+	bi_show(R, base);
+	printf("\n");
+
+	bi_delete(&A);
+	bi_delete(&B);
+	bi_delete(&Q);
+	bi_delete(&R);
+
+	system("pause");
+
+}
+
+
+void calculate_mod_exp()
+{
+	system("cls");
+	printf("Choose string base size\n");
+	printf("1. Base 2\n2. Base 10\n3. Base 16\n");
+	int base;
+	scanf("Enter Base: %d", &base);
+	printf("Enter base big number by string: ");
+	/*
+	첫번째 빅넘버 문자열 입력 구현 필요
+	*/
+	char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+	printf("Enter exponential big number by string: ");
+	/*
+	두번째 빅넘버 문자열 입력 구현 필요
+	*/
+	char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+	printf("Enter modular big number by string: ");
+	/*
+	세번째 빅넘버 문자열 입력 구현 필요
+	*/
+	char str3[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+
+	bigint* A = NULL;
+	bigint* B = NULL;
+	bigint* C = NULL;
+	bi_set_by_string(&A, 0, str1, base);
+	bi_set_by_string(&B, 0, str2, base);
+	bi_set_by_string(&C, 0, str2, base);
+
+	printf("Choose your style\n");
+	printf("1. Left to Right\n2. Right to Left\n3. Montgomery\n");
+	int choose;
+	scanf("choose: %d", &choose);
+
+	if(choose == 1)
+		ModExp_LTR(&A, B, C);
+	else if(choose == 2)
+		ModExp_RTL(&A, B, C);
+	else if(choose == 3)
+		ModExp_Montgomery(&A, B, C);
+
+	printf("result: ");
+	bi_show(A, base);
+	printf("\n");
+
+	bi_delete(&A);
+	bi_delete(&B);
+	bi_delete(&C);
+
+	system("pause");
+	
+}
+
+
+
 
 

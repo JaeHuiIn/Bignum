@@ -267,7 +267,6 @@ void array_rand(word* dst, int wordlen)
 		p++;
 		cnt--;
 	}
-
 }
 
 void bi_gen_rand(bigint** x, int sign, int wordlen)
@@ -305,7 +304,6 @@ int get_jth_bit(bigint* x, int j)
 {
 	int Q = j / WORD_BITLEN;
 	int R = j % WORD_BITLEN;
-
 	if (R == 0)
 	{
 		return (x->a[Q]) & 0x01;

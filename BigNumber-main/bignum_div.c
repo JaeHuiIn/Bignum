@@ -44,30 +44,40 @@ void Binary_Long_Division(bigint* A, bigint* B, bigint** Q, bigint** R)
 {
 	bi_set_zero(Q);
 	bi_set_zero(R);
+
+	bigint* TEMP = NULL;	// 2^j를 구현할 임시 bigint
+	bigint* R_TEMP = NULL;
+
+	word one = 1ULL << (WORD_BITLEN - 1);
+	int n = (A->wordlen) * WORD_BITLEN;
 	
-	int n = (A->wordlen);
+	while (1)
+	{
+		if ((A->a[(A->wordlen) - 1] & one) - one == 0)
+			break;
+		one = one >> 1;
+		n--;
+	}
 	int a_j;
 
 	for(int j = n-1; j >= 0; j--) {
 		a_j = get_jth_bit(A, j);
 		Left_Shift(R, 1);	// R <- 2R
 		(*R)->a[0] += a_j;	// R을 1비트 왼쪽 쉬프트 하면 LSB는 항상 0이된다. 따라서 LSB에 0 또는 1인 a_j 추가. (or 연산으로 구현하는것도 가능할듯)
-		
-		if(Compare_ABS(*R, B) >= 0) {	// if R >= B
-			bigint* TEMP = NULL;	// 2^j를 구현할 임시 bigint
+
+		if (Compare_ABS(*R, B) > 0) {	// if R >= B
 			bi_set_one(&TEMP);		// TEMP = 1
 			Left_Shift(&TEMP, j);	// 1 << j 	-->  2^j 구현
 			bi_self_add(Q, TEMP);	// Q <- Q + 2^j
-			
-			bigint* R_TEMP = NULL;	
+
 			bi_assign(&R_TEMP, *R);
 			bi_subc(R_TEMP, B, R);
-
-			bi_delete(&TEMP);
-			bi_delete(&R_TEMP);
 		}
-
 	}
+
+
+	bi_delete(&TEMP);
+	bi_delete(&R_TEMP);
 
 }
 
