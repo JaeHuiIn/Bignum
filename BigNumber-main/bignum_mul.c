@@ -45,7 +45,7 @@ void bi_mul(bigint* x, bigint* y, bigint** C)
 	bigint* add_C = NULL;
 
 	int max_len = x->wordlen + y->wordlen;  //C의 최대 길이
-	
+
 	bi_new(&Copy_C, max_len);   // 곱셈 결과를 저장할 C를 max_len 길이로 초기화
 	bi_new(&add_C, max_len);
 	for (int i = 0; i < x->wordlen; i++)

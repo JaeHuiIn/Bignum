@@ -168,7 +168,6 @@ void calculate_bignumber()
 }
 
 
-
 void add_speed()
 {
     int check;  // 테스트 데이터 쌍 개수
@@ -259,7 +258,6 @@ void sub_speed()
     bi_delete(&C);
     
 }
-
 
 void schoolbook_mul_speed()
 {
@@ -493,7 +491,6 @@ void Binary_Long_Division_speed()
 
 }
 
-
 void Multiprecision_Division_speed()
 {
 	system("cls");
@@ -539,8 +536,6 @@ void Multiprecision_Division_speed()
     bi_delete(&R);
 
 }
-
-
 
 
 void basic_test()
@@ -1399,39 +1394,53 @@ void mod_exp_test()
 }
 
 
-
 void calculate_add()
 {
-	system("cls");
-	printf("Choose string base size\n");
-	printf("1. Base 2\n2. Base 10\n3. Base 16\n");
 	int base;
-	scanf("Enter Base: %d", &base);
-	printf("Enter frist big number by string: ");
-	/*
-	첫번째 빅넘버 문자열 입력 구현 필요
-	*/
-	char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-	printf("Enter second big number by string: ");
-	/*
-	두번째 빅넘버 문자열 입력 구현 필요
-	*/
-	char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-
+	int num, A_sign, B_sign;
+	int sign1, sign2;
+	char str1[1], str2[1];
 	bigint* A = NULL;
 	bigint* B = NULL;
 	bigint* C = NULL;
+	system("cls");
+	printf("Choose string base size\n");
+	printf("1. Base 2\n2. Base 10\n3. Base 16\nEnter Base: ");
+	scanf("%d", &base);
+	num = base;
+	/*
+	첫번째 빅넘버 문자열 입력 구현 필요
 
-	int sign1, sign2;
-	printf("set sign of A and B\n");
-	scanf("Sign of A: %d", &sign1);
-	scanf("Sign of B: %d", &sign2);
-	bi_set_by_string(&A, sign1, str1, base);
-	bi_set_by_string(&B, sign2, str2, base);
+	char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+	*/
+	printf("set sign of A and B\nSign of A: ");
+	scanf("%d", &sign1);
+	A_sign = sign1;
+	printf("Enter frist big number by string: ");
+	scanf("%s", &str1);
+	bi_set_by_string(&A, A_sign, str1, num);
+	printf("Sign of B: ");
+	scanf("%d", &sign2);
+	B_sign = sign2;
+	printf("Enter second big number by string: ");
+	/*
+	두번째 빅넘버 문자열 입력 구현 필요
+	
+	char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+	*/
+	scanf("%s", &str2);
+	bi_set_by_string(&B, B_sign, str2, num);
 
-	printf("result: ");
+	if(num == 2)
+		printf("result: 0b");
+	else if (num == 10)
+		printf("result: ");
+	else if (num == 16)
+		printf("result: 0x");
+
 	bi_add(A, B, &C);
-	bi_show(C, base);
+	bi_show(C, num);
+	printf("\n");
 
 	bi_delete(&A);
 	bi_delete(&B);
@@ -1439,40 +1448,54 @@ void calculate_add()
 
 	system("pause");
 }
-
 
 void calculate_sub()
 {
-	system("cls");
-	printf("Choose string base size\n");
-	printf("1. Base 2\n2. Base 10\n3. Base 16\n");
 	int base;
-	scanf("Enter Base: %d", &base);
-	printf("Enter frist big number by string: ");
-	/*
-	첫번째 빅넘버 문자열 입력 구현 필요
-	*/
-	char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-	printf("Enter second big number by string: ");
-	/*
-	두번째 빅넘버 문자열 입력 구현 필요
-	*/
-	char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-
+	int num, A_sign, B_sign;
+	int sign1, sign2;
+	char str1[1], str2[1];
 	bigint* A = NULL;
 	bigint* B = NULL;
 	bigint* C = NULL;
+	system("cls");
+	printf("Choose string base size\n");
+	printf("1. Base 2\n2. Base 10\n3. Base 16\nEnter Base: ");
+	scanf("%d", &base);
+	num = base;
+	/*
+	첫번째 빅넘버 문자열 입력 구현 필요
 
-	int sign1, sign2;
-	printf("set sign of A and B\n");
-	scanf("Sign of A: %d", &sign1);
-	scanf("Sign of B: %d", &sign2);
-	bi_set_by_string(&A, sign1, str1, base);
-	bi_set_by_string(&B, sign2, str2, base);
+	char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+	*/
+	printf("set sign of A and B\nSign of A: ");
+	scanf("%d", &sign1);
+	A_sign = sign1;
+	printf("Enter frist big number by string: ");
+	scanf("%s", &str1);
+	bi_set_by_string(&A, A_sign, str1, num);
+	printf("Sign of B: ");
+	scanf("%d", &sign2);
+	B_sign = sign2;
+	printf("Enter second big number by string: ");
+	/*
+	두번째 빅넘버 문자열 입력 구현 필요
 
-	printf("result: ");
+	char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+	*/
+	scanf("%s", &str2);
+	bi_set_by_string(&B, B_sign, str2, num);
+
+	if (num == 2)
+		printf("result: 0b");
+	else if (num == 10)
+		printf("result: ");
+	else if (num == 16)
+		printf("result: 0x");
+
 	bi_sub(A, B, &C);
-	bi_show(C, base);
+	bi_show(C, num);
+	printf("\n");
 
 	bi_delete(&A);
 	bi_delete(&B);
@@ -1481,69 +1504,80 @@ void calculate_sub()
 	system("pause");
 }
 
-
 void calculate_mul()
 {
+	int base;
+	int num, A_sign, B_sign;
+
 	system("cls");
 	printf("Choose string base size\n");
-	printf("1. Base 2\n2. Base 10\n3. Base 16\n");
-	int base;
-	scanf("Enter Base: %d", &base);
+	printf("1. Base 2\n2. Base 10\n3. Base 16\nEnter Base: ");
+	scanf("%d", &base);
+	num = base;
 
 	printf("Press 1 for Karatsuba Multiplication\n");
-	printf("Press 2 for karatsuba Squaring\n");
+	printf("Press 2 for karatsuba Squaring\nEnter: ");
 	int press;
-	scanf("Enter: %d", &press);
+	scanf("%d", &press);
 
-	if(press == 1){
-		printf("Enter frist big number by string: ");
-		/*
-		첫번째 빅넘버 문자열 입력 구현 필요
-		*/
-		char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-		printf("Enter second big number by string: ");
-		/*
-		두번째 빅넘버 문자열 입력 구현 필요
-		*/
-		char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-
+	if (press == 1) {
 		bigint* A = NULL;
 		bigint* B = NULL;
 		bigint* C = NULL;
-
+		char str1[1], str2[1];
 		int sign1, sign2;
 
-		printf("set sign of A and B\n");
-		scanf("Sign of A: %d", &sign1);
-		scanf("Sign of B: %d", &sign2);
-		bi_set_by_string(&A, sign1, str1, base);
-		bi_set_by_string(&B, sign2, str2, base);
+		printf("set sign of A and B\nSign of A: ");
+		scanf("%d", &sign1);
+		A_sign = sign1;
+		printf("Enter frist big number by string: ");
+		scanf("%s", &str1);
 
+		bi_set_by_string(&A, A_sign, str1, num);
+		printf("Sign of B: ");
+		scanf("%d", &sign2);
+		B_sign = sign2;
+		printf("Enter second big number by string: ");
 
+		scanf("%s", &str2);
+		bi_set_by_string(&B, B_sign, str2, num);
 
-		printf("result: ");
+		if (num == 2)
+			printf("result: 0b");
+		else if (num == 10)
+			printf("result: ");
+		else if (num == 16)
+			printf("result: 0x");
+
 		bi_kmulc(A, B, &C);
-		bi_show(C, base);
+		bi_show(C, num);
+		printf("\n");
 
 		bi_delete(&A);
 		bi_delete(&B);
 		bi_delete(&C);
 
 
+
 	}
-	else if(press == 2){
-		printf("Enter frist big number by string: ");
-		/*
-		첫번째 빅넘버 문자열 입력 구현 필요
-		*/
-		char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-		
+	else if (press == 2) {
+		char str1[1];
+		int sign1;
 		bigint* A = NULL;
 		bigint* B = NULL;
 
-		bi_set_by_string(&A, 0, str1, base);
+		printf("set sign of A and B\nSign of A: ");
+		scanf("%d", &sign1);
+		A_sign = sign1;
+		printf("Enter frist big number by string: ");
+		scanf("%s", &str1);
 
-		printf("result: ");
+		if (num == 2)
+			printf("result: 0b");
+		else if (num == 10)
+			printf("result: ");
+		else if (num == 16)
+			printf("result: 0x");
 		bi_ksquaringC(A, &B);
 		bi_show(B, base);
 
@@ -1555,39 +1589,74 @@ void calculate_mul()
 
 }
 
-
 void calculate_div()
 {
-	printf("Choose string base size\n");
-	printf("1. Base 2\n2. Base 10\n3. Base 16\n");
 	int base;
-	scanf("Enter Base: %d", &base);
-	printf("Enter frist big number by string: ");
-	/*
-	첫번째 빅넘버 문자열 입력 구현 필요
-	*/
-	char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-	printf("Enter second big number by string: ");
-	/*
-	두번째 빅넘버 문자열 입력 구현 필요
-	*/
-	char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-
+	int num, A_sign, B_sign;
+	int sign1, sign2;
+	char str1[1], str2[1];
 	bigint* A = NULL;
 	bigint* B = NULL;
 	bigint* Q = NULL;
 	bigint* R = NULL;
+	system("cls");
+	printf("Choose string base size\n");
+	printf("1. Base 2\n2. Base 10\n3. Base 16\nEnter Base: ");
+	scanf("%d", &base);
+	num = base;
+	/*
+	첫번째 빅넘버 문자열 입력 구현 필요
 
-	bi_set_by_string(&A, 0, str1, base);
-	bi_set_by_string(&B, 0, str2, base);
+	char str1[] = "1234";   // <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+	*/
+	printf("set sign of A and B\nSign of A: ");
+	scanf("%d", &sign1);
+	A_sign = sign1;
+	printf("Enter frist big number by string: ");
+	scanf("%s", &str1);
+	bi_set_by_string(&A, A_sign, str1, num);
+	printf("Sign of B: ");
+	scanf("%d", &sign2);
+	B_sign = sign2;
+	printf("Enter second big number by string: ");
+	/*
+	두번째 빅넘버 문자열 입력 구현 필요
 
-	printf("result\n");
+	char str2[] = "1234";   // <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
+	*/
+	scanf("%s", &str2);
+	bi_set_by_string(&B, B_sign, str2, num);
+
 	DIV(A, B, &Q, &R);
-	printf("Q: ");
-	bi_show(Q, base);
-	printf("\nR: ");
-	bi_show(R, base);
-	printf("\n");
+	printf("result: \n");
+	if (num == 2)
+	{
+		printf("Q: 0b");
+		bi_show(Q, num);
+		printf("\nR: 0b");
+		bi_show(R, num);
+		printf("\n");
+
+	}
+	else if (num == 10)
+	{
+		printf("Q: ");
+		bi_show(Q, num);
+		printf("\nR: ");
+		bi_show(R, num);
+		printf("\n");
+
+	}
+	else if (num == 16)
+	{
+		printf("Q: 0x");
+		bi_show(Q, num);
+		printf("\nR: 0x");
+		bi_show(R, num);
+		printf("\n");
+
+	}
+
 
 	bi_delete(&A);
 	bi_delete(&B);
@@ -1598,41 +1667,46 @@ void calculate_div()
 
 }
 
-
 void calculate_mod_exp()
 {
-	system("cls");
-	printf("Choose string base size\n");
-	printf("1. Base 2\n2. Base 10\n3. Base 16\n");
 	int base;
-	scanf("Enter Base: %d", &base);
-	printf("Enter base big number by string: ");
-	/*
-	첫번째 빅넘버 문자열 입력 구현 필요
-	*/
-	char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-	printf("Enter exponential big number by string: ");
-	/*
-	두번째 빅넘버 문자열 입력 구현 필요
-	*/
-	char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-	printf("Enter modular big number by string: ");
-	/*
-	세번째 빅넘버 문자열 입력 구현 필요
-	*/
-	char str3[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-
+	int choose;
+	int num, A_sign, B_sign, C_sign;
+	int sign1, sign2, sign3;
+	char str1[1], str2[1], str3[1];
 	bigint* A = NULL;
 	bigint* B = NULL;
 	bigint* C = NULL;
-	bi_set_by_string(&A, 0, str1, base);
-	bi_set_by_string(&B, 0, str2, base);
-	bi_set_by_string(&C, 0, str2, base);
+	system("cls");
+	printf("Choose string base size\n");
+	printf("1. Base 2\n2. Base 10\n3. Base 16\nEnter Base: ");
+	scanf("%d", &base);
+	num = base;
+
+	printf("set sign of A and B and C\nSign of A: ");
+	scanf("%d", &sign1);
+	A_sign = sign1;
+	printf("Enter frist big number by string: ");
+	scanf("%s", &str1);
+	bi_set_by_string(&A, A_sign, str1, num);
+	
+	printf("Sign of B: ");
+	scanf("%d", &sign2);
+	B_sign = sign2;
+	printf("Enter second big number by string: ");
+	scanf("%s", &str2);
+	bi_set_by_string(&B, B_sign, str2, num);
+
+	printf("Sign of C: ");
+	scanf("%d", &sign3);
+	C_sign = sign3;
+	printf("Enter second big number by string: ");
+	scanf("%s", &str3);
+	bi_set_by_string(&C, C_sign, str3, num);
 
 	printf("Choose your style\n");
-	printf("1. Left to Right\n2. Right to Left\n3. Montgomery\n");
-	int choose;
-	scanf("choose: %d", &choose);
+	printf("1. Left to Right\n2. Right to Left\n3. Montgomery\nchoose: ");
+	scanf("%d", &choose);
 
 	if(choose == 1)
 		ModExp_LTR(&A, B, C);
@@ -1642,7 +1716,7 @@ void calculate_mod_exp()
 		ModExp_Montgomery(&A, B, C);
 
 	printf("result: ");
-	bi_show(A, base);
+	bi_show(A, num);
 	printf("\n");
 
 	bi_delete(&A);

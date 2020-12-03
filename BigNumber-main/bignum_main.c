@@ -2,7 +2,7 @@
 
 int main()
 {
-	/*
+	
 	srand((unsigned)time(NULL));
 	
 	bignumber_test();
@@ -12,27 +12,26 @@ int main()
 	printf("Thanks for using!\n");
 	system("pause");
 	system("cls");
-	*/
+	
 
-
+	/*
 	char a[1];
 	scanf("%s", &a);
-	
+	int base = 16;
 	bigint* Teemo = NULL;
 
 	bi_set_by_string(&Teemo, NON_NEGATIVE, a, 10);
 
 
-
-	bi_show(Teemo, 16);
+	bi_show(Teemo, base);
 	printf("\n");
 
 
-	bi_show(Teemo, 16);
+	bi_show(Teemo, base);
 	printf("\n");
 
 	bi_delete(&Teemo);
-
+	*/
 	return 0;
 }
 
