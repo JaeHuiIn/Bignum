@@ -1,4 +1,4 @@
-#define WORD_BITLEN 64
+#define WORD_BITLEN 8
 
 #if WORD_BITLEN == 8
 typedef unsigned char word;
@@ -11,4 +11,4 @@ typedef unsigned long long word;
 #define WORD_MASK 0xffffffffffffffff; 
 #endif 
 
-#define ZERORIZE  
+#define ZERORIZE

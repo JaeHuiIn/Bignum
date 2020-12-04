@@ -13,11 +13,10 @@ void bi_delete(bigint** x)
 {
 	if (*x == NULL)
 		return;
-
+	
 #ifdef ZERORIZE
 	array_init((*x)->a, (*x)->wordlen);
 #endif
-
 	free((*x)->a);
 	free(*x);
 	*x = NULL;
@@ -248,8 +247,9 @@ void array_copy(word y[], word x[], int wordlen)    // 수정 필요
 void bi_assign(bigint** y, bigint* x)
 {
 	if (*y != NULL)
+	{
 		bi_delete(y);
-	bi_new(y, x->wordlen);
+	}bi_new(y, x->wordlen);
 	(*y)->sign = x->sign;
 	array_copy((*y)->a, x->a, x->wordlen);
 }

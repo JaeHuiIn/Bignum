@@ -1549,7 +1549,7 @@ void calculate_mul()
 		else if (num == 16)
 			printf("result: 0x");
 
-		bi_kmulc(A, B, &C);
+		bi_mul(A, B, &C);
 		bi_show(C, num);
 		printf("\n");
 
