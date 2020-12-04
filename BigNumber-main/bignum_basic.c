@@ -237,9 +237,8 @@ void array_copy(word y[], word x[], int wordlen)    // 수정 필요
 void bi_assign(bigint** y, bigint* x)
 {
 	if (*y != NULL)
-	{
 		bi_delete(y);
-	}bi_new(y, x->wordlen);
+	bi_new(y, x->wordlen);
 	(*y)->sign = x->sign;
 	array_copy((*y)->a, x->a, x->wordlen);
 }

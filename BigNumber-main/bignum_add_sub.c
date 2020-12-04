@@ -1,10 +1,6 @@
 #include "bignum_all_header.h"
 
-//*************************************
-// bi_add : 덧셈 함수 (x + y를 C에 저장)
-// input  : 두 개의 bigint x, y
-// output : 한 개의 bigint C
-//*************************************
+
 void bi_add(bigint* x, bigint* y, bigint** C)
 {
 	if(x->sign != NEGATIVE && y->sign == NEGATIVE) {
@@ -89,11 +85,7 @@ void bi_add(bigint* x, bigint* y, bigint** C)
 		(*C)->sign = NEGATIVE;
 }
 
-//*************************************
-// bi_self_add : 덧셈 함수 (x + y를 x에 저장)
-// input  : 두 개의 bigint x, y
-// output : 한 개의 bigint x
-//*************************************
+
 void bi_self_add(bigint** x, bigint* y)
 {
 	bigint* Copy_x = NULL;
@@ -102,11 +94,7 @@ void bi_self_add(bigint** x, bigint* y)
 	bi_delete(&Copy_x);
 }
 
-//*************************************
-// bi_subc : 뺄셈 함수 (x - y (x >= y)를 C에 저장)
-// input   : 두 개의 bigint x, y
-// output  : 한 개의 bigint C
-//*************************************
+
 void bi_subc(bigint* x, bigint* y, bigint** C)  // x >= y > 0 에서 x - y
 {
 	word b = 0;
@@ -134,11 +122,7 @@ void bi_subc(bigint* x, bigint* y, bigint** C)  // x >= y > 0 에서 x - y
 	}
 }
 
-//*************************************
-// bi_sub : 뺄셈 함수 (x - y를 C에 저장)
-// input  : 두 개의 bigint x, y
-// output : 한 개의 bigint C
-//*************************************
+
 void bi_sub(bigint* x, bigint* y, bigint** C)
 {
 	bigint* Copy_C = NULL;
@@ -230,11 +214,7 @@ void bi_sub(bigint* x, bigint* y, bigint** C)
 
 }
 
-//*************************************
-// bi_self_sub : 뺄셈 함수 (x - y를 x에 저장)
-// input  : 두 개의 bigint x, y
-// output : 한 개의 bigint x
-//*************************************
+
 void bi_self_sub(bigint** x, bigint* y)
 {
 	bigint* Copy_x = NULL;

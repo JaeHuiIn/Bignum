@@ -1,9 +1,5 @@
 #include "bignum_all_header.h"
-//*************************************
-// bi_mulc : 곱셈 함수 (x * y를 C에 저장)
-// input   : 두 개의 word x, y
-// output  : 한 개의 bigint C
-//*************************************
+
 void bi_mulc(word x, word y, bigint** C)
 {
 	word crr = 0;
@@ -42,11 +38,7 @@ void bi_mulc(word x, word y, bigint** C)
     }
 }
 
-//*************************************
-// bi_mul : 곱셈 함수 (x * y를 C에 저장)
-// input  : 두 개의 bigint x, y
-// output : 한 개의 bigint C
-//*************************************
+
 void bi_mul(bigint* x, bigint* y, bigint** C)
 {
 	bigint* C_word = NULL;  // singhle pricision을 저장하는 bigint 구조체
@@ -81,11 +73,16 @@ void bi_mul(bigint* x, bigint* y, bigint** C)
 	bi_delete(&Copy_C);
 }
 
-//*************************************
-// bi_kmul : 카라츄바 곱셈 함수 (x * y를 C에 저장)
-// input  : 두 개의 bigint x, y와 
-// output : 한 개의 bigint C
-//*************************************
+
+void bi_self_mul(bigint** x, bigint* y)
+{
+	bigint* Copy_x = NULL;
+	bi_assign(&Copy_x, *x);
+	bi_mul(Copy_x, y, x);
+	bi_delete(&Copy_x);
+}
+
+
 void bi_kmul(bigint* x, bigint* y, bigint** C, int flag)
 {
 	// printf("test 1\n");
@@ -194,6 +191,7 @@ void bi_kmul(bigint* x, bigint* y, bigint** C, int flag)
 	bi_delete(&Copy_R);
 }
 
+
 void bi_kmulc(bigint* x, bigint* y, bigint** C)
 {
 	int sign = 0;
@@ -235,6 +233,7 @@ void bi_kmulc(bigint* x, bigint* y, bigint** C)
 	
 	bi_delete(&TEMP);
 }
+
 
 void bi_squaringC(word x, bigint** C)
 {
@@ -369,12 +368,4 @@ void bi_ksquaringC(bigint* x, bigint** C)
 
 	bi_assign(C, TEMP);
 	bi_delete(&TEMP);
-}
-
-void bi_self_mul(bigint** x, bigint* y)
-{
-	bigint* Copy_x = NULL;
-	bi_assign(&Copy_x, *x);
-	bi_mul(Copy_x, y, x);
-	bi_delete(&Copy_x);
 }
