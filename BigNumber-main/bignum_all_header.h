@@ -15,53 +15,144 @@ typedef struct {
 	word* a;
 } bigint;
 
-//***********************************************************기본 함수
+//********************************************기본 함수********************************************
 void array_init(word* a, int wordlen);
 
-
+//*************************************
+// bi_delete : 제거함수
+// input     : 한 개의 bigint x
+// output    : 아무것도 없는 한 개의 bigint x
+//*************************************
 void bi_delete(bigint** x);
+
+//*************************************
+// bi_new : 생성함수
+// input  : 한 개의 bigint x와 한 개의 word base
+// output : 한 개의 bigint x
+//*************************************
 void bi_new(bigint** x, int wordlen);
 
-
+//*************************************
+// bi_set_by_array   : 작성함수
+// bi_set_by_string  : 작성함수
+// input             : 한 개의 bigint x와 두 개의 int sign, wordlen(base)과 한 개의 word(char) a
+// output            : bi_set_by_array -> bigint x에 부호는 sign, 길이는 wordlen인 a를 작성
+// output            : bi_set_by_array -> bigint x에 부호는 sign인 base진수 a를 작성
+//*************************************
 void bi_set_by_array(bigint** x, int sign, word* a, int wordlen);
 void bi_set_by_string(bigint** x, int sign, char* a, int base);
+
+//*************************************
+// bi_show   : 출력함수
+// input     : 한 개의 bigint x와 한 개의 word base
+// output    : bigint x를 base진수로 출력
+//*************************************
 void bi_show(bigint* x, word base);
 
-
+//*************************************
+// bi_refine   : 앞 자리 제거 함수 (x의 맨 앞의 0으로 된 word 제거)
+// input       : 한 개의 bigint x
+// output      : 한 개의 bigint x
+//*************************************
 void bi_refine(bigint* x);
 
-
+//*************************************
+// array_copy  : 복사 함수 (y에 x를 복사)
+// input       : 두 개의 word x, y와 한 개의 int wordlen
+// output      : 복사된 word y
+//*************************************
 void array_copy(word y[], word x[], int wordlen);
+
+//*************************************
+// bi_assign  : 복사 함수 (y에 x를 복사)
+// input      : 두 개의 bigint x, y
+// output     : 한 개의 bigint y
+//*************************************
 void bi_assign(bigint** y, bigint* x);
 
-
+//*************************************
+// array_rand  : 랜덤 생성 함수
+// bi_gen_rand : 랜덤 생성 함수
+// output      : 랜덤한 수
+//*************************************
 void array_rand(word* dst, int wordlen);
 void bi_gen_rand(bigint** x, int sign, int wordlen);
 
-
+//*************************************
+// get_wordlen  : 확인 함수 (x의 길이를 확인하는 함수)
+// get_bitlen   : 확인 함수 (x의 비트 길이를 확인하는 함수)
+// input        : 한 개의 bigint x
+// output       : x의 길이(비트 길이)
+//*************************************
 int get_wordlen(bigint* x);
 int get_bitlen(bigint* x);
+
+//*************************************
+// get_jth_bit   : 확인 함수 (x의 j번째 비트 수를 확인하는 함수)
+// input         : 한 개의 bigint x와 int j
+// output        : 1 or 0
+//*************************************
 int get_jth_bit(bigint* x, int j);
 
-
+//*************************************
+// bi_get_sign   : 확인 함수 (x의 부호를 확인하는 함수)
+// input         : 한 개의 bigint x
+// output        : 음수면 NEGATIVE, 양수면 NON-NEGATIVE
+//*************************************
 int bi_get_sign(bigint* x);
+
+//*************************************
+// bi_flip_sign  : 변환 함수 (x를 -x로 만드는 함수)
+// input         : 한 개의 bigint x
+// output        : 한 개의 bigint x
+//*************************************
 void bi_flip_sign(bigint** x);
 
-
+//*************************************
+// bi_set_one  : 변환 함수 (x를 1로 만드는 함수)
+// bi_set_zero : 변환 함수 (x를 0로 만드는 함수)
+// input       : 한 개의 bigint x
+// output      : 한 개의 bigint x
+//*************************************
 void bi_set_one(bigint** x);
 void bi_set_zero(bigint** x);
+
+//*************************************
+// is_zero : 확인 함수 (x가 0인지 확인)
+// is_one  : 확인 함수 (x가 1인지 확인)
+// input   : 한 개의 bigint x
+// output  : is_zero - 0이면 0, 아니면 1 출력, is_one - 1이면 1, 아니면 0출력
+//*************************************
 int is_zero(bigint* x);
 int is_one(bigint* x);
 
-
+//*************************************
+// Compare_ABS : 비교 함수(A와 B를 비교하는 함수)
+// input       : 두 개의 양의 bigint A, B
+// output      : A가 더 크면 1, B가 더 크면 -1, 두 값이 같으면 0
+//*************************************
 int Compare_ABS(bigint* A, bigint* B);
+//*************************************
+// Compare_AB : 비교 함수(A와 B를 비교하는 함수)
+// input      : 두 개의 bigint A, B
+// output     : A가 더 크면 1, B가 더 크면 -1, 두 값이 같으면 0
+//*************************************
 int Compare_AB(bigint** A, bigint** B);
 
-
+//*************************************
+// Left_Shift  : 쉬프트 함수(A를 왼쪽으로 r번 이동한 결과를 A에 저장)
+// Right_Shift : 쉬프트 함수(A를 오른쪽으로 r번 이동한 결과를 A에 저장)
+// input       : 한 개의 bigint A와 한 개의 int r
+// output      : 한 개의 bigint A
+//*************************************
 void Left_Shift(bigint** x, int r);
 void Right_Shift(bigint** x, int r);
 
-
+//*************************************
+// Reduction : 모듈러 함수(A를 mod 2^r한 결과를 A에 저장)
+// input     : 한 개의 bigint A와 한 개의 int r
+// output    : 한 개의 bigint A
+//*************************************
 void Reduction(bigint** A, int r);
 
 
