@@ -89,16 +89,12 @@ void bi_set_by_string(bigint** x, int sign, char* a, int base)   // bigint x <- 
 	else if(base == 10){	// 10진수 string 입력 
 		bigint* DEC = NULL;
 		bigint* TEN = NULL;
-		bigint* x_temp = NULL;
 		bi_set_zero(&DEC);
 		bi_set_zero(&TEN);
 		TEN->a[0] = 10;
 
-
 		for(int i = 0; i < len; i++) {
-			bi_assign(&x_temp, *x);
-			bi_mul(x_temp, TEN, x);	// 입력값 x에 10을 곱한다
-
+			bi_self_mul(x, TEN);
 			DEC->a[0] = a[i] - 48;
 
 			bi_self_add(x, DEC);
@@ -107,8 +103,6 @@ void bi_set_by_string(bigint** x, int sign, char* a, int base)   // bigint x <- 
 
 		bi_delete(&DEC);
 		bi_delete(&TEN);
-		bi_delete(&x_temp);
-		
 	}
 	else if(base == 16){	// 16진수 string 입력
 		bigint* HEX = NULL;
@@ -138,7 +132,6 @@ void bi_set_by_string(bigint** x, int sign, char* a, int base)   // bigint x <- 
 
 }
 
-
 // Show big int
 void bi_show(bigint* x, word base)
 {
@@ -158,38 +151,35 @@ void bi_show(bigint* x, word base)
 	}
 	else if (base == 10)
 	{
-		bigint* TEN = NULL;
-		bi_new(&TEN, 1);
-		TEN->a[0] = 10;
-		word tenten[200000] = {0, }; 
 		int j = 0;
+		bigint* TEN = NULL;
+		bigint* NUM = NULL;
 		bigint* x_temp = NULL;
 		bigint* Q = NULL;
 		bigint* R = NULL;
+		bi_new(&TEN, 1);
+		bi_set_zero(&NUM);
+		TEN->a[0] = 10;
 		bi_assign(&x_temp, x);
-
-
 		while(is_zero(x_temp) != 0){
 			DIV(x_temp, TEN, &Q, &R);
-
-			tenten[j] = R->a[0];
-			j += 1;
-
+			Left_Shift(&R, j*WORD_BITLEN);
+			bi_self_add(&NUM, R);
 			bi_assign(&x_temp, Q);
-
+			printf("%d\n", NUM->a[j]);
+			j += 1;
 		}
 		// j - 1 은 10진수로 표현되는 마지막 자리수의 인덱스를 의미한다.
-		
-		
-		for(int i = j - 1; i >= 0; i--) {
-			printf("%d", tenten[i]);
+		for (int i = NUM->wordlen - 1; i >= 0; i--)
+		{
+			printf("%d", NUM->a[i]);
 		}
-
-
+		printf("\n");
 		bi_delete(&x_temp);
 		bi_delete(&Q);
 		bi_delete(&R);
-	
+		bi_delete(&TEN);
+		bi_delete(&NUM);
 	}
 	else if (base == 16)
 	{

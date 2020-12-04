@@ -1399,7 +1399,8 @@ void calculate_add()
 	int base;
 	int num, A_sign, B_sign;
 	int sign1, sign2;
-	char str1[1], str2[1];
+	char* str1 = malloc(sizeof(char) * 2048);
+	char* str2 = malloc(sizeof(char) * 2048);
 	bigint* A = NULL;
 	bigint* B = NULL;
 	bigint* C = NULL;
@@ -1417,7 +1418,7 @@ void calculate_add()
 	scanf("%d", &sign1);
 	A_sign = sign1;
 	printf("Enter frist big number by string: ");
-	scanf("%s", &str1);
+	scanf("%s", str1);
 	bi_set_by_string(&A, A_sign, str1, num);
 	printf("Sign of B: ");
 	scanf("%d", &sign2);
@@ -1428,7 +1429,7 @@ void calculate_add()
 	
 	char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
 	*/
-	scanf("%s", &str2);
+	scanf("%s", str2);
 	bi_set_by_string(&B, B_sign, str2, num);
 
 	if(num == 2)
@@ -1445,7 +1446,8 @@ void calculate_add()
 	bi_delete(&A);
 	bi_delete(&B);
 	bi_delete(&C);
-
+	free(str1);
+	free(str2);
 	system("pause");
 }
 
@@ -1454,7 +1456,8 @@ void calculate_sub()
 	int base;
 	int num, A_sign, B_sign;
 	int sign1, sign2;
-	char str1[1], str2[1];
+	char* str1 = malloc(sizeof(char) * 2048);
+	char* str2 = malloc(sizeof(char) * 2048);
 	bigint* A = NULL;
 	bigint* B = NULL;
 	bigint* C = NULL;
@@ -1475,7 +1478,7 @@ void calculate_sub()
 	scanf("%s", &str1);
 	bi_set_by_string(&A, A_sign, str1, num);
 	printf("Sign of B: ");
-	scanf("%d", &sign2);
+	scanf("%d", sign2);
 	B_sign = sign2;
 	printf("Enter second big number by string: ");
 	/*
@@ -1483,7 +1486,7 @@ void calculate_sub()
 
 	char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
 	*/
-	scanf("%s", &str2);
+	scanf("%s", str2);
 	bi_set_by_string(&B, B_sign, str2, num);
 
 	if (num == 2)
@@ -1500,7 +1503,8 @@ void calculate_sub()
 	bi_delete(&A);
 	bi_delete(&B);
 	bi_delete(&C);
-
+	free(str1);
+	free(str2);
 	system("pause");
 }
 
@@ -1524,14 +1528,16 @@ void calculate_mul()
 		bigint* A = NULL;
 		bigint* B = NULL;
 		bigint* C = NULL;
-		char str1[1], str2[1];
+
+		char* str1 = malloc(sizeof(char) * 2048);
+		char* str2 = malloc(sizeof(char) * 2048);
 		int sign1, sign2;
 
 		printf("set sign of A and B\nSign of A: ");
 		scanf("%d", &sign1);
 		A_sign = sign1;
 		printf("Enter frist big number by string: ");
-		scanf("%s", &str1);
+		scanf("%s", str1);
 
 		bi_set_by_string(&A, A_sign, str1, num);
 		printf("Sign of B: ");
@@ -1539,9 +1545,13 @@ void calculate_mul()
 		B_sign = sign2;
 		printf("Enter second big number by string: ");
 
-		scanf("%s", &str2);
+		scanf("%s", str2);
 		bi_set_by_string(&B, B_sign, str2, num);
 
+		bi_show(A, num);
+		printf("\n");
+		bi_show(B, num);
+		printf("\n");
 		if (num == 2)
 			printf("result: 0b");
 		else if (num == 10)
@@ -1556,33 +1566,36 @@ void calculate_mul()
 		bi_delete(&A);
 		bi_delete(&B);
 		bi_delete(&C);
-
+		free(str1);
+		free(str2);
 
 
 	}
 	else if (press == 2) {
-		char str1[1];
+		char* str1 = malloc(sizeof(char) * 2048);
 		int sign1;
 		bigint* A = NULL;
 		bigint* B = NULL;
 
-		printf("set sign of A and B\nSign of A: ");
+		printf("set sign of A\nSign of A: ");
 		scanf("%d", &sign1);
 		A_sign = sign1;
 		printf("Enter frist big number by string: ");
-		scanf("%s", &str1);
-
+		scanf("%s", str1);
+		bi_set_by_string(&A, A_sign, str1, num);
 		if (num == 2)
 			printf("result: 0b");
 		else if (num == 10)
 			printf("result: ");
 		else if (num == 16)
 			printf("result: 0x");
+
 		bi_ksquaringC(A, &B);
 		bi_show(B, base);
-
+		printf("\n");
 		bi_delete(&A);
 		bi_delete(&B);
+		free(str1);
 	}
 
 	system("pause");
@@ -1594,7 +1607,8 @@ void calculate_div()
 	int base;
 	int num, A_sign, B_sign;
 	int sign1, sign2;
-	char str1[1], str2[1];
+	char* str1 = malloc(sizeof(char) * 2048);
+	char* str2 = malloc(sizeof(char) * 2048);
 	bigint* A = NULL;
 	bigint* B = NULL;
 	bigint* Q = NULL;
@@ -1613,7 +1627,7 @@ void calculate_div()
 	scanf("%d", &sign1);
 	A_sign = sign1;
 	printf("Enter frist big number by string: ");
-	scanf("%s", &str1);
+	scanf("%s", str1);
 	bi_set_by_string(&A, A_sign, str1, num);
 	printf("Sign of B: ");
 	scanf("%d", &sign2);
@@ -1624,7 +1638,7 @@ void calculate_div()
 
 	char str2[] = "1234";   // <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
 	*/
-	scanf("%s", &str2);
+	scanf("%s", str2);
 	bi_set_by_string(&B, B_sign, str2, num);
 
 	DIV(A, B, &Q, &R);
@@ -1662,7 +1676,8 @@ void calculate_div()
 	bi_delete(&B);
 	bi_delete(&Q);
 	bi_delete(&R);
-
+	free(str1);
+	free(str2);
 	system("pause");
 
 }
@@ -1673,7 +1688,9 @@ void calculate_mod_exp()
 	int choose;
 	int num, A_sign, B_sign, C_sign;
 	int sign1, sign2, sign3;
-	char str1[1], str2[1], str3[1];
+	char* str1 = malloc(sizeof(char) * 2048);
+	char* str2 = malloc(sizeof(char) * 2048);
+	char* str3 = malloc(sizeof(char) * 2048);
 	bigint* A = NULL;
 	bigint* B = NULL;
 	bigint* C = NULL;
@@ -1687,21 +1704,21 @@ void calculate_mod_exp()
 	scanf("%d", &sign1);
 	A_sign = sign1;
 	printf("Enter frist big number by string: ");
-	scanf("%s", &str1);
+	scanf("%s", str1);
 	bi_set_by_string(&A, A_sign, str1, num);
 	
 	printf("Sign of B: ");
 	scanf("%d", &sign2);
 	B_sign = sign2;
 	printf("Enter second big number by string: ");
-	scanf("%s", &str2);
+	scanf("%s", str2);
 	bi_set_by_string(&B, B_sign, str2, num);
 
 	printf("Sign of C: ");
 	scanf("%d", &sign3);
 	C_sign = sign3;
 	printf("Enter second big number by string: ");
-	scanf("%s", &str3);
+	scanf("%s", str3);
 	bi_set_by_string(&C, C_sign, str3, num);
 
 	printf("Choose your style\n");
@@ -1715,13 +1732,21 @@ void calculate_mod_exp()
 	else if(choose == 3)
 		ModExp_Montgomery(&A, B, C);
 
-	printf("result: ");
+	if (num == 2)
+		printf("result: 0b");
+	else if (num == 10)
+		printf("result: ");
+	else if (num == 16)
+		printf("result: 0x");
 	bi_show(A, num);
 	printf("\n");
 
 	bi_delete(&A);
 	bi_delete(&B);
 	bi_delete(&C);
+	free(str1);
+	free(str2);
+	free(str3);
 
 	system("pause");
 	
