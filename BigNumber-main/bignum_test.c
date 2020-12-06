@@ -1651,7 +1651,6 @@ void calculate_div()
 {
 	int base;
 	int num, A_sign, B_sign;
-	int sign1, sign2;
 	char* str1 = malloc(sizeof(char) * 2048);
 	char* str2 = malloc(sizeof(char) * 2048);
 	bigint* A = NULL;
@@ -1727,7 +1726,6 @@ void calculate_mod_exp()
 	int base;
 	int choose;
 	int num, A_sign, B_sign, C_sign;
-	int sign1, sign2, sign3;
 	char* str1 = malloc(sizeof(char) * 2048);
 	char* str2 = malloc(sizeof(char) * 2048);
 	char* str3 = malloc(sizeof(char) * 2048);
@@ -1740,23 +1738,19 @@ void calculate_mod_exp()
 	scanf("%d", &base);
 	num = base;
 
-	printf("set sign of A and B and C\nSign of A: ");
-	scanf("%d", &sign1);
-	A_sign = sign1;
+	printf("sign of A and B and C == NON_NEGATIVE\n");
+	
+	A_sign = NON_NEGATIVE;
 	printf("Enter frist big number by string: ");
 	scanf("%s", str1);
 	bi_set_by_string(&A, A_sign, str1, num);
 	
-	printf("Sign of B: ");
-	scanf("%d", &sign2);
-	B_sign = sign2;
+	B_sign = NON_NEGATIVE;
 	printf("Enter second big number by string: ");
 	scanf("%s", str2);
 	bi_set_by_string(&B, B_sign, str2, num);
 
-	printf("Sign of C: ");
-	scanf("%d", &sign3);
-	C_sign = sign3;
+	C_sign = NON_NEGATIVE;
 	printf("Enter second big number by string: ");
 	scanf("%s", str3);
 	bi_set_by_string(&C, C_sign, str3, num);
@@ -1774,33 +1768,15 @@ void calculate_mod_exp()
 
 	if (num == 2)
 	{
-		if (A->sign == NEGATIVE)
-		{
-			bi_flip_sign(&A);
-			printf("result: -0b");
-		}
-		else
-			printf("result: 0b");
+		printf("result: 0b");
 	}
 	else if (num == 10)
 	{
-		if (A->sign == NEGATIVE)
-		{
-			bi_flip_sign(&A);
-			printf("result: -0");
-		}
-		else
-			printf("result: 0");
+		printf("result: 0");
 	}
 	else if (num == 16)
 	{
-		if (A->sign == NEGATIVE)
-		{
-			bi_flip_sign(&A);
-			printf("result: -0x");
-		}
-		else
-			printf("result: 0x");
+		printf("result: 0x");
 	}
 	bi_show(A, num);
 	printf("\n");
