@@ -7,7 +7,7 @@ void ModExp_LTR(bigint** x, bigint* n, bigint* N)    // x^n mod N
 	bigint* t_temp = NULL;
 	bigint* Q_temp = NULL;
 	bigint* R_temp = NULL;
-	bi_assign(&x_temp, *x);
+	bi_assign(&x_temp, *x);		// assign "x" to "x_temp"
 	bi_set_one(&t); // t <- 1
 	word one = 1ULL << (WORD_BITLEN - 1);
 	int j = n->wordlen * WORD_BITLEN;
@@ -21,21 +21,21 @@ void ModExp_LTR(bigint** x, bigint* n, bigint* N)    // x^n mod N
 	// x를 저장하는 임시변수
 
 	for (int i = j-1; i >= 0; i--) {
-		bi_squaring(t, &t_temp);  // t_temp = t^2
-		DIV(t_temp, N, &Q_temp, &R_temp);  // t_temp mod N (t^2 mod N)
-		bi_assign(&t_temp, R_temp);
+		bi_squaring(t, &t_temp);  			// t_temp = t^2
+		DIV(t_temp, N, &Q_temp, &R_temp);   // t_temp mod N (t^2 mod N)
+		bi_assign(&t_temp, R_temp);			// assign "R_temp" to "t_temp"
 		if (get_jth_bit(n, i) == 1) {
-			bi_mul(t_temp, x_temp, &t);  // t = t_temp * x 
-			DIV(t, N, &Q_temp, &R_temp);       // t mod N ( t^2 * x mod N)
-			bi_assign(&t, R_temp);
+			bi_mul(t_temp, x_temp, &t);  	// t = t_temp * x 
+			DIV(t, N, &Q_temp, &R_temp);    // t mod N ( t^2 * x mod N)
+			bi_assign(&t, R_temp);			// assign "R_temp" to "t"
 		}
 		else
 		{
-			DIV(t_temp, N, &Q_temp, &R_temp);       // t mod N ( t^2 * x mod N)
-			bi_assign(&t, R_temp);
+			DIV(t_temp, N, &Q_temp, &R_temp);       // t_temp = N * Q_temp + R_temp
+			bi_assign(&t, R_temp);					// assign "R_temp" to "t"
 		}
 	}
-	bi_assign(x, t);
+	bi_assign(x, t);	// assign "t" to "x"
 	bi_delete(&t);
 	bi_delete(&x_temp);
 	bi_delete(&t_temp);
@@ -55,26 +55,26 @@ void ModExp_RTL(bigint** x, bigint* n, bigint* N)
 	bigint* n_temp = NULL;
 	bi_set_one(&t0);        // t0 <- 1
 	bi_assign(&t1, *x);     // t1 <- x
-	bi_assign(&n_temp, n);
+	bi_assign(&n_temp, n);	// assign "n" to "n_temp"
 
 	while (is_zero(n_temp) != 0) {
-		int n_i = get_jth_bit(n_temp, 0); // n의 lsb
-		Right_Shift(&n_temp, 1); 
+		int n_i = get_jth_bit(n_temp, 0); 	// n의 lsb
+		Right_Shift(&n_temp, 1); 			// n_temp >> 1
 
 		if (n_i == 1) {
-			bi_assign(&t0_temp, t0);
-			bi_mul(t0_temp, t1, &t0);
-			DIV(t0, N, &Q_temp, &R_temp);  // t mod N (t^2 mod N)
-			bi_assign(&t0, R_temp);
+			bi_assign(&t0_temp, t0);		// assign "t0" to "t0_temp"
+			bi_mul(t0_temp, t1, &t0);		// t0 <- t0_temp * t1
+			DIV(t0, N, &Q_temp, &R_temp); 	// t0 = N * Q_temp + R_temp
+			bi_assign(&t0, R_temp);			// assign "R_temp" to "t0"
 		}
-		bi_squaring(t1, &t1_temp);
-		bi_assign(&t1, t1_temp);
-		DIV(t1, N, &Q_temp, &R_temp);  // t mod N (t^2 mod N)
-		bi_assign(&t1, R_temp);
+		bi_squaring(t1, &t1_temp);		// t1_temp <- t1**2
+		bi_assign(&t1, t1_temp);		// assign "t1_temp" to "t1"
+		DIV(t1, N, &Q_temp, &R_temp);	// t1 = N * Q_temp + R_temp
+		bi_assign(&t1, R_temp);			// assign "R_temp" to "t1"
 
 	}
 
-	bi_assign(x, t0);
+	bi_assign(x, t0);		// assign "t0" to "x"
 	bi_delete(&t0_temp);
 	bi_delete(&t0);
 	bi_delete(&t1);
@@ -109,35 +109,35 @@ void ModExp_Montgomery(bigint** x, bigint* n, bigint* N)
 	// j 는 n의 비트열 길이를 의미한다. j - 1 은 bit[]에서 MSB가 위치한 곳의 인덱스가 된다.  
 
 	for (int i = j - 1; i >= 0; i--) {
-		if (get_jth_bit(n, i) == 0) {
+		if (get_jth_bit(n, i) == 0) {		// n_i == 0
 			// t1 <- t0 * t1
-			bi_assign(&t1_temp, t1);
-			bi_mul(t0, t1_temp, &t1);
-			DIV(t1, N, &Q_temp, &R_temp);  // t mod N (t^2 mod N)
-			bi_assign(&t1, R_temp);
+			bi_assign(&t1_temp, t1);		// assign "t1" to "t1_temp"
+			bi_mul(t0, t1_temp, &t1);		// t1 <- t0 * t1_temp
+			DIV(t1, N, &Q_temp, &R_temp);   // t1 = N * Q_temp + R_temp
+			bi_assign(&t1, R_temp);			// assign "R_temp" to "t1"
 
 			// t0 <- t0^2
-			bi_assign(&t0_temp, t0);
-			bi_squaring(t0_temp, &t0);
-			DIV(t0, N, &Q_temp, &R_temp);  // t mod N (t^2 mod N)
+			bi_assign(&t0_temp, t0);		// assign "t0" to "t0_temp"
+			bi_squaring(t0_temp, &t0);		// t0 <- t0_temp ** 2
+			DIV(t0, N, &Q_temp, &R_temp);  	// t0 = N * Q_temp + R_temp
 			bi_assign(&t0, R_temp);
 		}
-		else {
+		else {	// n_i == 1
 			// t0 <- t0 * t1
-			bi_assign(&t0_temp, t0);
-			bi_mul(t1, t0_temp, &t0);
-			DIV(t0, N, &Q_temp, &R_temp);  // t mod N (t^2 mod N)
+			bi_assign(&t0_temp, t0);		// assign "t0" to "t0_temp"	
+			bi_mul(t1, t0_temp, &t0);		// t0 <- t1 * t0_temp
+			DIV(t0, N, &Q_temp, &R_temp);  	// t0 = N * Q_temp + R_temp
 			bi_assign(&t0, R_temp);
 
 			// t1 <- t1^2
-			bi_assign(&t1_temp, t1);
-			bi_squaring(t1_temp, &t1);
-			DIV(t1, N, &Q_temp, &R_temp);  // t mod N (t^2 mod N)
-			bi_assign(&t1, R_temp);
+			bi_assign(&t1_temp, t1);		// assign "t1" to "t1_temp"
+			bi_squaring(t1_temp, &t1);		// t1 <- t1_temp ** 2
+			DIV(t1, N, &Q_temp, &R_temp);  	// t1 = N * Q_temp + R_temp
+			bi_assign(&t1, R_temp);			// assign "R_temp" to t1
 		}
 	}
 
-	bi_assign(x, t0);
+	bi_assign(x, t0);		// assign "t0" to "x"
 	bi_delete(&t1_temp);
 	bi_delete(&t0_temp);
 	bi_delete(&t0);

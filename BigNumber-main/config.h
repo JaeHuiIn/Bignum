@@ -1,4 +1,4 @@
-#define WORD_BITLEN 32
+#define WORD_BITLEN 64
 
 #if WORD_BITLEN == 8
 typedef unsigned char word;

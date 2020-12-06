@@ -1664,16 +1664,13 @@ void calculate_div()
 	scanf("%d", &base);
 	num = base;
 
-	printf("set sign of A and B\nSign of A: ");
-	scanf("%d", &sign1);
-	A_sign = sign1;
+	printf("sign of A and B == NON_NEGATIVE\n");
+	A_sign = NON_NEGATIVE;
 	printf("Enter frist big number by string: ");
 	scanf("%s", str1);
 	bi_set_by_string(&A, A_sign, str1, num);
 
-	printf("Sign of B: ");
-	scanf("%d", &sign2);
-	B_sign = sign2;
+	B_sign = NON_NEGATIVE;
 	printf("Enter second big number by string: ");
 	scanf("%s", str2);
 	bi_set_by_string(&B, B_sign, str2, num);
@@ -1682,69 +1679,33 @@ void calculate_div()
 	printf("result: \n");
 	if (num == 2)
 	{
-		if (Q->sign == NEGATIVE)
-		{
-			bi_flip_sign(&Q);
-			printf("Q: -0b");
-		}
-		else
-			printf("Q: 0b");
+		printf("Q: 0b");
 
 		bi_show(Q, num);
 		printf("\n");
-		if (R->sign == NEGATIVE)
-		{
-			bi_flip_sign(&R);
-			printf("R: -0b");
-		}
-		else
-			printf("R: 0b");
+		printf("R: 0b");
 		bi_show(R, num);
 		printf("\n");
 
 	}
 	else if (num == 10)
 	{
-		if (Q->sign == NEGATIVE)
-		{
-			bi_flip_sign(&Q);
-			printf("Q: -");
-		}
-		else
-			printf("Q: ");
+		printf("Q: ");
 
 		bi_show(Q, num);
 		printf("\n");
-		if (R->sign == NEGATIVE)
-		{
-			bi_flip_sign(&R);
-			printf("R: -");
-		}
-		else
-			printf("R: ");
+		printf("R: ");
 		bi_show(R, num);
 		printf("\n");
 
 	}
 	else if (num == 16)
 	{
-		if (Q->sign == NEGATIVE)
-		{
-			bi_flip_sign(&Q);
-			printf("Q: -0x");
-		}
-		else
-			printf("Q: 0x");
+		printf("Q: 0x");
 
 		bi_show(Q, num);
 		printf("\n");
-		if (R->sign == NEGATIVE)
-		{
-			bi_flip_sign(&R);
-			printf("R: -0x");
-		}
-		else
-			printf("R: 0x");
+		printf("R: 0x");
 		bi_show(R, num);
 		printf("\n");
 
