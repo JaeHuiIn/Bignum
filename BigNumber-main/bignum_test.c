@@ -14,7 +14,7 @@ void bignumber_test()
 		scanf("%d", &choose);
 		printf("\n\n");	
 
-		if(choose == 1) {	// check time
+		if(choose == 1) {  	    // check time
 			speed_check();
 		}
 		else if(choose == 2) {	// check accuracy
@@ -170,7 +170,7 @@ void calculate_bignumber()
 
 void add_speed()
 {
-    int check;  // 테스트 데이터 쌍 개수
+    int check;                  // 테스트 데이터 쌍 개수
     int first_number_wordlen;   // 첫번째 bigint의 워드길이
     int second_number_wordlen;  // 두번째 bigint의 워드길이
 
@@ -195,15 +195,15 @@ void add_speed()
     bi_gen_rand(&A, 0, first_number_wordlen);
     bi_gen_rand(&B, 0, second_number_wordlen);
 
-    clock_t start, end; // 시간 측정용 변수
+    clock_t start, end;                 // 시간 측정용 변수
 
-    start = clock();    // 측정 시작
+    start = clock();                   // 측정 시작
     for(int i = 0; i < check / 3; i++){
         bi_add(A, B, &C);   
         bi_add(C, A, &B);
         bi_add(B, C, &A);
     }
-    end = clock();      // 측정 종료
+    end = clock();                     // 측정 종료
 
     printf("Add function Time: %lf\n", (double)(end - start) / CLOCKS_PER_SEC);
 	system("pause");
@@ -289,30 +289,7 @@ void schoolbook_mul_speed()
     clock_t start, end; // 시간 측정용 변수
 
     start = clock();    // 측정 시작
-	// int checks[4] = {0, };
     for(int i = 0; i < check; i++) {
-		/*
-		if(check / (i + 1) >= 90 && checks[0] == 0){
-			system("cls");
-			printf("%d%%", 10);
-			checks[0] = 1;
-		}
-		else if(check / (i + 1) >= 70 && checks[1] == 0){
-			system("cls");
-			printf("%d%%", 30);
-			checks[1] = 1;			
-		}
-		else if(check / (i + 1) >= 50 && checks[2] == 0){
-			system("cls");
-			printf("%d%%", 50);
-			checks[2] = 1;
-		}
-		else if(check / (i + 1) >= 10 && checks[3] == 0){
-			system("cls");
-			printf("%d%%", 90);
-			checks[3] = 1;
-		}*/
-
         bi_mul(A, B, &C);
     }
     end = clock();
@@ -358,8 +335,6 @@ void karatsuba_mul_speed()
     start = clock();    // 측정 시작
 	
     for(int i = 0; i < check; i++) {
-		
-
         bi_kmulc(A, B, &C);
     }
     end = clock();
@@ -556,16 +531,10 @@ void basic_test()
 	printf("#show by base 2: ");
 	bi_show(teemo1, 2);
 	printf("\n");
-	// printf("show by base 10: \n");
-  	// bi_show(teemo, 10);
 	printf("#show by base 16: ");
 	bi_show(teemo1, 16);
 	printf("\n\n");
-	/*
-	NEED TO IMPLEMENT BASE 10
-	*/
 
-	// assign bigint (only test for x > 0)
 	printf("# Assign big int x <-- y \n");
 	printf("y = 0x");
 	bi_show(teemo1, 16);
@@ -595,8 +564,6 @@ void basic_test()
 
 	// get j-bit of bigint
 	int j = 4;
-	// printf("# enter j: ");
-	// scanf("%d\n", j);
 	int j_th = get_jth_bit(teemo1, j);
 	printf("# %d-th bit: %d\n\n", j, j_th);
 
@@ -762,6 +729,7 @@ void add_test()
 			printf("y = -0x");
 			bi_show(a1, 16);
 			printf("\n");
+			bi_flip_sign(&a1);
 		}
 
 		bi_add(a0, a1, &t0);
@@ -1409,37 +1377,54 @@ void calculate_add()
 	printf("1. Base 2\n2. Base 10\n3. Base 16\nEnter Base: ");
 	scanf("%d", &base);
 	num = base;
-	/*
-	첫번째 빅넘버 문자열 입력 구현 필요
-
-	char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-	*/
+	
 	printf("set sign of A and B\nSign of A: ");
 	scanf("%d", &sign1);
 	A_sign = sign1;
 	printf("Enter frist big number by string: ");
 	scanf("%s", str1);
 	bi_set_by_string(&A, A_sign, str1, num);
+
 	printf("Sign of B: ");
 	scanf("%d", &sign2);
 	B_sign = sign2;
 	printf("Enter second big number by string: ");
-	/*
-	두번째 빅넘버 문자열 입력 구현 필요
-	
-	char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-	*/
 	scanf("%s", str2);
 	bi_set_by_string(&B, B_sign, str2, num);
 
-	if(num == 2)
-		printf("result: 0b");
-	else if (num == 10)
-		printf("result: ");
-	else if (num == 16)
-		printf("result: 0x");
 
 	bi_add(A, B, &C);
+	if (num == 2)
+	{
+		if (C->sign == NEGATIVE)
+		{
+			bi_flip_sign(&C);
+			printf("result: -0b");
+		}
+		else
+			printf("result: 0b");
+	}
+	else if (num == 10)
+	{
+		if (C->sign == NEGATIVE)
+		{
+			bi_flip_sign(&C);
+			printf("result: -0");
+		}
+		else
+			printf("result: 0");
+	}
+	else if (num == 16)
+	{
+		if (C->sign == NEGATIVE)
+		{
+			bi_flip_sign(&C);
+			printf("result: -0x");
+		}
+		else
+			printf("result: 0x");
+	}
+
 	bi_show(C, num);
 	printf("\n");
 
@@ -1466,37 +1451,53 @@ void calculate_sub()
 	printf("1. Base 2\n2. Base 10\n3. Base 16\nEnter Base: ");
 	scanf("%d", &base);
 	num = base;
-	/*
-	첫번째 빅넘버 문자열 입력 구현 필요
 
-	char str1[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-	*/
 	printf("set sign of A and B\nSign of A: ");
 	scanf("%d", &sign1);
 	A_sign = sign1;
 	printf("Enter frist big number by string: ");
-	scanf("%s", &str1);
+	scanf("%s", str1);
 	bi_set_by_string(&A, A_sign, str1, num);
+
 	printf("Sign of B: ");
-	scanf("%d", sign2);
+	scanf("%d", &sign2);
 	B_sign = sign2;
 	printf("Enter second big number by string: ");
-	/*
-	두번째 빅넘버 문자열 입력 구현 필요
-
-	char str2[] = "1234";	// <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-	*/
 	scanf("%s", str2);
 	bi_set_by_string(&B, B_sign, str2, num);
 
-	if (num == 2)
-		printf("result: 0b");
-	else if (num == 10)
-		printf("result: ");
-	else if (num == 16)
-		printf("result: 0x");
-
 	bi_sub(A, B, &C);
+	if (num == 2)
+	{
+		if (C->sign == NEGATIVE)
+		{
+			bi_flip_sign(&C);
+			printf("result: -0b");
+		}
+		else
+			printf("result: 0b");
+	}
+	else if (num == 10)
+	{
+		if (C->sign == NEGATIVE)
+		{
+			bi_flip_sign(&C);
+			printf("result: -0");
+		}
+		else
+			printf("result: 0");
+	}
+	else if (num == 16)
+	{
+		if (C->sign == NEGATIVE)
+		{
+			bi_flip_sign(&C);
+			printf("result: -0x");
+		}
+		else
+			printf("result: 0x");
+	}
+
 	bi_show(C, num);
 	printf("\n");
 
@@ -1547,19 +1548,38 @@ void calculate_mul()
 
 		scanf("%s", str2);
 		bi_set_by_string(&B, B_sign, str2, num);
-
-		bi_show(A, num);
-		printf("\n");
-		bi_show(B, num);
-		printf("\n");
+		bi_kmulc(A, B, &C);
 		if (num == 2)
-			printf("result: 0b");
+		{
+			if (C->sign == NEGATIVE)
+			{
+				bi_flip_sign(&C);
+				printf("result: -0b");
+			}
+			else
+				printf("result: 0b");
+		}
 		else if (num == 10)
-			printf("result: ");
+		{
+			if (C->sign == NEGATIVE)
+			{
+				bi_flip_sign(&C);
+				printf("result: -0");
+			}
+			else
+				printf("result: 0");
+		}
 		else if (num == 16)
-			printf("result: 0x");
+		{
+			if (C->sign == NEGATIVE)
+			{
+				bi_flip_sign(&C);
+				printf("result: -0x");
+			}
+			else
+				printf("result: 0x");
+		}
 
-		bi_mul(A, B, &C);
 		bi_show(C, num);
 		printf("\n");
 
@@ -1583,14 +1603,39 @@ void calculate_mul()
 		printf("Enter frist big number by string: ");
 		scanf("%s", str1);
 		bi_set_by_string(&A, A_sign, str1, num);
-		if (num == 2)
-			printf("result: 0b");
-		else if (num == 10)
-			printf("result: ");
-		else if (num == 16)
-			printf("result: 0x");
 
 		bi_ksquaringC(A, &B);
+		if (num == 2)
+		{
+			if (B->sign == NEGATIVE)
+			{
+				bi_flip_sign(&B);
+				printf("result: -0b");
+			}
+			else
+				printf("result: 0b");
+		}
+		else if (num == 10)
+		{
+			if (B->sign == NEGATIVE)
+			{
+				bi_flip_sign(&B);
+				printf("result: -0");
+			}
+			else
+				printf("result: 0");
+		}
+		else if (num == 16)
+		{
+			if (B->sign == NEGATIVE)
+			{
+				bi_flip_sign(&B);
+				printf("result: -0x");
+			}
+			else
+				printf("result: 0x");
+		}
+
 		bi_show(B, base);
 		printf("\n");
 		bi_delete(&A);
@@ -1618,26 +1663,18 @@ void calculate_div()
 	printf("1. Base 2\n2. Base 10\n3. Base 16\nEnter Base: ");
 	scanf("%d", &base);
 	num = base;
-	/*
-	첫번째 빅넘버 문자열 입력 구현 필요
 
-	char str1[] = "1234";   // <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-	*/
 	printf("set sign of A and B\nSign of A: ");
 	scanf("%d", &sign1);
 	A_sign = sign1;
 	printf("Enter frist big number by string: ");
 	scanf("%s", str1);
 	bi_set_by_string(&A, A_sign, str1, num);
+
 	printf("Sign of B: ");
 	scanf("%d", &sign2);
 	B_sign = sign2;
 	printf("Enter second big number by string: ");
-	/*
-	두번째 빅넘버 문자열 입력 구현 필요
-
-	char str2[] = "1234";   // <-- 임의로 구현한것. 동적 할당으로 새로 구현 필요함
-	*/
 	scanf("%s", str2);
 	bi_set_by_string(&B, B_sign, str2, num);
 
@@ -1645,27 +1682,69 @@ void calculate_div()
 	printf("result: \n");
 	if (num == 2)
 	{
-		printf("Q: 0b");
+		if (Q->sign == NEGATIVE)
+		{
+			bi_flip_sign(&Q);
+			printf("Q: -0b");
+		}
+		else
+			printf("Q: 0b");
+
 		bi_show(Q, num);
-		printf("\nR: 0b");
+		printf("\n");
+		if (R->sign == NEGATIVE)
+		{
+			bi_flip_sign(&R);
+			printf("R: -0b");
+		}
+		else
+			printf("R: 0b");
 		bi_show(R, num);
 		printf("\n");
 
 	}
 	else if (num == 10)
 	{
-		printf("Q: ");
+		if (Q->sign == NEGATIVE)
+		{
+			bi_flip_sign(&Q);
+			printf("Q: -");
+		}
+		else
+			printf("Q: ");
+
 		bi_show(Q, num);
-		printf("\nR: ");
+		printf("\n");
+		if (R->sign == NEGATIVE)
+		{
+			bi_flip_sign(&R);
+			printf("R: -");
+		}
+		else
+			printf("R: ");
 		bi_show(R, num);
 		printf("\n");
 
 	}
 	else if (num == 16)
 	{
-		printf("Q: 0x");
+		if (Q->sign == NEGATIVE)
+		{
+			bi_flip_sign(&Q);
+			printf("Q: -0x");
+		}
+		else
+			printf("Q: 0x");
+
 		bi_show(Q, num);
-		printf("\nR: 0x");
+		printf("\n");
+		if (R->sign == NEGATIVE)
+		{
+			bi_flip_sign(&R);
+			printf("R: -0x");
+		}
+		else
+			printf("R: 0x");
 		bi_show(R, num);
 		printf("\n");
 
@@ -1733,11 +1812,35 @@ void calculate_mod_exp()
 		ModExp_Montgomery(&A, B, C);
 
 	if (num == 2)
-		printf("result: 0b");
+	{
+		if (A->sign == NEGATIVE)
+		{
+			bi_flip_sign(&A);
+			printf("result: -0b");
+		}
+		else
+			printf("result: 0b");
+	}
 	else if (num == 10)
-		printf("result: ");
+	{
+		if (A->sign == NEGATIVE)
+		{
+			bi_flip_sign(&A);
+			printf("result: -0");
+		}
+		else
+			printf("result: 0");
+	}
 	else if (num == 16)
-		printf("result: 0x");
+	{
+		if (A->sign == NEGATIVE)
+		{
+			bi_flip_sign(&A);
+			printf("result: -0x");
+		}
+		else
+			printf("result: 0x");
+	}
 	bi_show(A, num);
 	printf("\n");
 

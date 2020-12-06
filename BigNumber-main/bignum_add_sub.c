@@ -5,12 +5,12 @@ void bi_add(bigint* x, bigint* y, bigint** C)
 {
 	if(x->sign != NEGATIVE && y->sign == NEGATIVE) {
 		y->sign = NON_NEGATIVE;
-		bi_sub(x, y, C);
+		bi_sub(x, y, C);	// C <- x - y
 		return;
 	}
 	else if(x->sign == NEGATIVE && y->sign != NEGATIVE) {
 		x->sign = NON_NEGATIVE;
-		bi_sub(y, x, C);
+		bi_sub(y, x, C);	// C <- y - x
 		return;
 	}
 	int min_len;
@@ -32,11 +32,11 @@ void bi_add(bigint* x, bigint* y, bigint** C)
 		flag = -1;
 	}
 
-	bi_new(C, max_len + 1);
+	bi_new(C, max_len + 1);	
 
 	word c = 0;
 	word c1 = 0;
-	for (int i = 0; i < min_len; i++)    // x + y 부분 실행
+	for (int i = 0; i < min_len; i++)    // x + y 
 	{
 		c1 = 0;
 		(*C)->a[i] = (x->a[i] + y->a[i]);
@@ -51,8 +51,8 @@ void bi_add(bigint* x, bigint* y, bigint** C)
 		c = c1;
 	}
 
-	// x + 0 또는 y + 0 수행
-	if (flag == 1) {
+
+	if (flag == 1) {	// x + 0 or y + 0
 		for (int i = min_len; i < max_len; i++)
 		{
 			(*C)->a[i] = (x->a[i] + c);
@@ -77,7 +77,7 @@ void bi_add(bigint* x, bigint* y, bigint** C)
 
 	if (c == 1)
 		(*C)->a[max_len] = 1;
-	bi_refine(*C);
+	bi_refine(*C);	// refine C
 
 	if(x->sign == NON_NEGATIVE && y->sign == NON_NEGATIVE)
 		(*C)->sign = NON_NEGATIVE;
@@ -85,13 +85,12 @@ void bi_add(bigint* x, bigint* y, bigint** C)
 		(*C)->sign = NEGATIVE;
 }
 
-
 void bi_self_add(bigint** x, bigint* y)
 {
 	bigint* Copy_x = NULL;
-	bi_assign(&Copy_x, *x);
-	bi_add(Copy_x, y, x);
-	bi_delete(&Copy_x);
+	bi_assign(&Copy_x, *x);	// assign "x" to "Copy_x"
+	bi_add(Copy_x, y, x);	// x <- Copy_x + y
+	bi_delete(&Copy_x);		
 }
 
 
@@ -129,8 +128,8 @@ void bi_sub(bigint* x, bigint* y, bigint** C)
 	bigint* Copy_x = NULL;
 	bigint* Copy_y = NULL;
 
-	bi_assign(&Copy_x, x);
-	bi_assign(&Copy_y, y);
+	bi_assign(&Copy_x, x);		// assign "x" to "Copy_x"  
+	bi_assign(&Copy_y, y);		// assign "y" to "Copy_y"
 
 
 	int max_len;
@@ -146,67 +145,67 @@ void bi_sub(bigint* x, bigint* y, bigint** C)
 
 	bi_new(&Copy_C, max_len);
 
-	if (is_zero(Copy_x) == 0)
+	if (is_zero(Copy_x) == 0)	// if Copy_x is 0
 	{
-		bi_assign(&Copy_C, y);
-		bi_flip_sign(&Copy_C);    // -Y를 리턴
+		bi_assign(&Copy_C, y);	// assign "y" to "Copy_C"
+		bi_flip_sign(&Copy_C);  // Copy_C <- -Copy_C
 	}
-	else if (is_zero(Copy_y) == 0)
+	else if (is_zero(Copy_y) == 0)	// if Copy_y is 0
 	{
-		bi_assign(&Copy_C, x);    // X를 리턴
+		bi_assign(&Copy_C, x);    // assign "x" to "Copy_C"
 	}
 	else
 	{
-		if (Copy_x->sign == NON_NEGATIVE && Copy_y->sign == NON_NEGATIVE)    // x, y 둘다 양수
+		if (Copy_x->sign == NON_NEGATIVE && Copy_y->sign == NON_NEGATIVE)    // x > 0 and y > 0
 		{
-			if (Compare_ABS(Copy_x, Copy_y) == 1)  // x > y > 0
+			if (Compare_ABS(Copy_x, Copy_y) == 1)  	// x > y > 0
 			{
-				bi_subc(Copy_x, Copy_y, &Copy_C);
+				bi_subc(Copy_x, Copy_y, &Copy_C);	// Copy_C <- Copy_x - Copy_y
 			}
 			else if (Compare_ABS(Copy_x, Copy_y) == 0) // x == y > 0
 			{
-				bi_set_zero(&Copy_C);
+				bi_set_zero(&Copy_C);				// Copy_C <- 0
 			}
 			else if (Compare_ABS(Copy_x, Copy_y) == -1)    // y > x > 0
 			{
-				bi_subc(Copy_y, Copy_x, &Copy_C);
-				bi_flip_sign(&Copy_C);
+				bi_subc(Copy_y, Copy_x, &Copy_C);	// Copy_C <- Copy_y - Copy_x
+				bi_flip_sign(&Copy_C);	// Copy_C <- - Copy_C
 			}
 		}
 		else if (Copy_x->sign != Copy_y->sign) // 둘 중 한개만 양수
 		{
 			if (Copy_x->sign == NON_NEGATIVE) // x > 0, y < 0
 			{
-				bi_flip_sign(&Copy_y);
-				bi_add(Copy_x, Copy_y, &Copy_C);    // add에서 sign을 사용하지 않는다.
+				bi_flip_sign(&Copy_y);	// Copy_y <- - Copy_y
+				bi_add(Copy_x, Copy_y, &Copy_C);	// Copy_C <- Copy_x + Copy_y
 			}
 			else    // x < 0, y > 0
 			{
-				bi_flip_sign(&Copy_x);
-				bi_add(Copy_x, Copy_y, &Copy_C);
-				bi_flip_sign(&Copy_C);
+				bi_flip_sign(&Copy_x);	// Copy_x <- - Copy_x
+				bi_add(Copy_x, Copy_y, &Copy_C);	// Copy_y <- Copy_x + Copy_y
+				bi_flip_sign(&Copy_C);	// Copy_C <- - Copy_C
 			}
 		}
-		else if (Copy_x->sign == NEGATIVE && Copy_y->sign == NEGATIVE)
+		else if (Copy_x->sign == NEGATIVE && Copy_y->sign == NEGATIVE)	// x < 0, y < 0
 		{
-			if (Compare_ABS(Copy_x, Copy_y) == 1)      // * 안넣는게 맞나? ㅠ
+			if (Compare_ABS(Copy_x, Copy_y) == 1)      // 0 > x > y
 			{
-				bi_subc(Copy_x, Copy_y, &Copy_C);
-				bi_flip_sign(&Copy_C);
-			}
-			else if (Compare_ABS(Copy_x, Copy_y) == 0)
+				bi_subc(Copy_x, Copy_y, &Copy_C);		// Copy_C <- Copy_x - Copy_y
+				bi_flip_sign(&Copy_C);	// Copy_C <- - Copy_C
+			}	
+			else if (Compare_ABS(Copy_x, Copy_y) == 0)	// 0 > x == y
 			{
-				bi_set_zero(&Copy_C);
+				bi_set_zero(&Copy_C);	// Copy_C <- 0
 
 			}
-			else if (Compare_ABS(Copy_x, Copy_y) == -1)
+			else if (Compare_ABS(Copy_x, Copy_y) == -1)	// 0 > y > x
 			{
-				bi_subc(Copy_y, Copy_x, &Copy_C);
+				bi_subc(Copy_y, Copy_x, &Copy_C);	// Copy_C <- Copy_y - Copy_x
 			}
 		}
 	}
-	bi_refine(Copy_C);
-	bi_assign(C, Copy_C);
+	bi_refine(Copy_C);		// refine Copy_C
+	bi_assign(C, Copy_C);	// assign "Copy_C" to "C"
 
 	bi_delete(&Copy_C);
 	bi_delete(&Copy_x);
@@ -215,10 +214,10 @@ void bi_sub(bigint* x, bigint* y, bigint** C)
 }
 
 
-void bi_self_sub(bigint** x, bigint* y)
+void bi_self_sub(bigint** x, bigint* y)	// x <- x - y
 {
 	bigint* Copy_x = NULL;
-	bi_assign(&Copy_x, *x);
-	bi_sub(Copy_x, y, x);
-	bi_delete(&Copy_x);
+	bi_assign(&Copy_x, *x);	// assign "x" to "Copy_x"
+	bi_sub(Copy_x, y, x);	// x <- Copy_x - y
+	bi_delete(&Copy_x);		
 }

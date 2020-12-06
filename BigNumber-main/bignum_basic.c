@@ -135,7 +135,7 @@ void bi_set_by_string(bigint** x, int sign, char* a, int base)   // bigint x <- 
 // Show big int
 void bi_show(bigint* x, word base)
 {
-	if (x->sign == NEGATIVE) printf("-");
+	//if (x->sign == NEGATIVE) printf("-");
 
 	if (base == 2)
 	{
@@ -166,7 +166,6 @@ void bi_show(bigint* x, word base)
 			Left_Shift(&R, j*WORD_BITLEN);
 			bi_self_add(&NUM, R);
 			bi_assign(&x_temp, Q);
-			printf("%d\n", NUM->a[j]);
 			j += 1;
 		}
 		// j - 1 은 10진수로 표현되는 마지막 자리수의 인덱스를 의미한다.
@@ -226,7 +225,7 @@ void bi_refine(bigint* x)
 }
 
 /* 2.4 Assign BigInt */
-void array_copy(word y[], word x[], int wordlen)    // 수정 필요
+void array_copy(word y[], word x[], int wordlen)  
 {
 	for (int i = 0; i < wordlen; i++)
 	{

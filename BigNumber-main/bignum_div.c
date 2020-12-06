@@ -1,37 +1,38 @@
 #include "bignum_all_header.h"
 
-void bi_sb_div(bigint* A, bigint* B, bigint** Q, bigint** R)	// schoolbook division
+// school book division
+void bi_sb_div(bigint* A, bigint* B, bigint** Q, bigint** R)
 {
-	if(B->sign == NEGATIVE || is_zero(B) == 0) {	// if B <= 0
+	if(B->sign == NEGATIVE || is_zero(B) == 0) {	// B <= 0
 		printf("INVALID");
 		return;
 	}
 
-	if(Compare_ABS(A, B) == -1){
-		bi_set_zero(Q);
-		bi_assign(R, A);
+	if(Compare_ABS(A, B) == -1){	// A < B
+		bi_set_zero(Q);		// Q <- 0
+		bi_assign(R, A);	// assign "A" to "R"
 		return;
 	}
 
-	if(is_one(B) == 1) {
-		bi_assign(Q, A);
-		bi_set_zero(R);
+	if(is_one(B) == 1) {	// B == 1
+		bi_assign(Q, A);	// assign "A" to "Q" 
+		bi_set_zero(R);		// R <- 0
 		return;
 	}
 
-	bi_set_zero(Q);
-	bi_assign(R, A);
+	bi_set_zero(Q);		// Q <- 0
+	bi_assign(R, A);	// assign "A" to "R"
 
 	bigint* ONE = NULL;
-	bi_set_one(&ONE);
+	bi_set_one(&ONE);	// ONE <- 0
 	
-	while(Compare_ABS(*R, B) >= 0) {	// while R >= B
-		bi_self_add(Q, ONE);
+	while(Compare_ABS(*R, B) >= 0) {	// R >= B
+		bi_self_add(Q, ONE);	// Q <- Q + ONE
 
-		bigint* R_temp = NULL;
-		bi_assign(&R_temp, *R);
-		bi_subc(R_temp, B, R);
-		bi_delete(&R_temp);
+		bigint* R_temp = NULL;	
+		bi_assign(&R_temp, *R);	// assign "R" to "R_temp"
+		bi_subc(R_temp, B, R);	// R <- R_temp - B
+		bi_delete(&R_temp);	
 
 	}
 
@@ -42,10 +43,10 @@ void bi_sb_div(bigint* A, bigint* B, bigint** Q, bigint** R)	// schoolbook divis
 
 void Binary_Long_Division(bigint* A, bigint* B, bigint** Q, bigint** R)
 {
-	bi_set_zero(Q);
-	bi_set_zero(R);
+	bi_set_zero(Q);		// Q <- 0
+	bi_set_zero(R);		// R <- 0
 
-	bigint* TEMP = NULL;	// 2^j를 구현할 임시 bigint
+	bigint* TEMP = NULL;
 	bigint* R_TEMP = NULL;
 
 	word one = 1ULL << (WORD_BITLEN - 1);
@@ -81,7 +82,8 @@ void Binary_Long_Division(bigint* A, bigint* B, bigint** Q, bigint** R)
 
 }
 
-void L_D_A(bigint* A, word B, bigint** Q)   // 함수의 자료형으로 word 사용 가능?{
+//	Long division algorithm for 2 word
+void L_D_A(bigint* A, word B, bigint** Q) 
 {
 	bigint* R = NULL;
 	bi_new(&R, 1);
@@ -89,24 +91,24 @@ void L_D_A(bigint* A, word B, bigint** Q)   // 함수의 자료형으로 word �
 	int w = WORD_BITLEN - 1;
 	bi_new(Q, 1);
 	bi_new(&R, 1);
-	bi_set_zero(Q);
-	R->a[0] = A->a[1];
+	bi_set_zero(Q);	// Q <- 0
+	R->a[0] = A->a[1];	// R <- A1
 
 	word upper = (1ULL << (WORD_BITLEN - 1));
 	for (j = w; j >= 0; j--)
 	{
 		if (R->a[0] >= upper)
 		{
-			(*Q)->a[0] += 1ULL << j;
-			R->a[0] = 2 * (R->a[0]) + ((A->a[0] & (1ULL << j)) >> j) - B;
+			(*Q)->a[0] += 1ULL << j;                               // Q <- Q + 2^j
+			R->a[0] = 2 * (R->a[0]) + ((A->a[0] & (1ULL << j)) >> j) - B;    // R <- 2R + a_j - B
 		}
 		else
 		{
-			R->a[0] = 2 * (R->a[0]) + ((A->a[0] & (1ULL << j))>>j);
-			if (R->a[0] >= B)
+			R->a[0] = 2 * (R->a[0]) + ((A->a[0] & (1ULL << j))>>j);    // R <- 2R + a_j
+			if (R->a[0] >= B)                                          // if R >= B
 			{
-				(*Q)->a[0] += 1ULL << j;
-				R->a[0] = (R->a[0]) - B;
+				(*Q)->a[0] += 1ULL << j;                               // Q <- Q + 2^j
+				R->a[0] = (R->a[0]) - B;                               // R <- R - B
 			}
 		}
 	}
@@ -115,7 +117,7 @@ void L_D_A(bigint* A, word B, bigint** Q)   // 함수의 자료형으로 word �
 	bi_delete(&R);
 }
 
-void bi_divcc(bigint* A, bigint* B, bigint** Q, bigint** R) // 0 <= R < B, Q \in 0 ~ W 인 Q, R를 어떻게 반환할지 잘 생각해보기
+void bi_divcc(bigint* A, bigint* B, bigint** Q, bigint** R)
 {
     int n = A->wordlen;
     int m = B->wordlen;
@@ -135,32 +137,33 @@ void bi_divcc(bigint* A, bigint* B, bigint** Q, bigint** R) // 0 <= R < B, Q \in
 		else {
 			Copy_A->a[1] = A->a[m];
 			Copy_A->a[0] = A->a[m-1];
-			L_D_A(Copy_A, B->a[m-1], Q);
+			L_D_A(Copy_A, B->a[m-1], Q);	// Q <- Copy_A / B->a[m-1]
 		}
 	}
 	bigint* BQ = NULL;
-    // R = A - BQ를 위한 구조체 생성
-    bi_mul(B, (*Q), &BQ);
-    bi_sub(A, BQ, R);
-    // Q_hat 계산 완료
+
+    bi_mul(B, (*Q), &BQ);	// BQ <- B * Q
+    bi_sub(A, BQ, R);		// R <- A - BQ
+   
 	// 근사시킨 Q_hat으로 Q를 구한다. 이를 위해 1 원소를 가지는 bignum을 생성
-   while((*R)->sign == NEGATIVE) 
-   {  // while R < 0 
-	   (*Q)->a[0] -= 1;   // Q = Q - 1;
-	   bi_self_add(R, B);    // R = R + B;
-   }
-   bi_delete(&BQ);
+    while((*R)->sign == NEGATIVE) 
+    {  // while R < 0 
+
+	    (*Q)->a[0] -= 1;   // Q = Q - 1;
+	   	bi_self_add(R, B);    // R <-> R + B;
+   	}
+  	bi_delete(&BQ);
 	bi_delete(&Copy_A);
 }
 
 void bi_divc(bigint* A, bigint* B, bigint** Q, bigint** R)
 {
-    if (Compare_ABS(A, B) != 1) {
-        bi_set_zero(Q);
-        bi_assign(R, A);
+    if (Compare_ABS(A, B) != 1) {	// A >= B
+        bi_set_zero(Q);	// Q <- 0
+        bi_assign(R, A);	// assign "A" to "R"
         return;
     }
-    int m = B->wordlen; // bigint B의 워드길이는 m이다
+    int m = B->wordlen; 
     word upper = 1ULL << (WORD_BITLEN - 1);  // 2^{w-1} 생성
 
     word B_m1 = B->a[m - 1];
@@ -179,20 +182,20 @@ void bi_divc(bigint* A, bigint* B, bigint** Q, bigint** R)
     }
     bigint* A_dash = NULL;
     bigint* B_dash = NULL;
-    bi_assign(&A_dash, A);
-    bi_assign(&B_dash, B);
-    Left_Shift(&A_dash, k);
-    Left_Shift(&B_dash, k);    
+    bi_assign(&A_dash, A);	// assign "A" to "A_dash"
+    bi_assign(&B_dash, B);	// assign "B" to "B_dash"
+    Left_Shift(&A_dash, k);	// A_dash << k
+    Left_Shift(&B_dash, k);	// B_dash << k
 
     bigint* Q_dash = NULL;
     bigint* R_dash = NULL;    
     bi_new(&Q_dash, 1);
     bi_new(&R_dash, 1);
-    bi_divcc(A_dash, B_dash, &Q_dash, &R_dash);
+    bi_divcc(A_dash, B_dash, &Q_dash, &R_dash);	// A_dash = B_dash * Q_dash + R_dash
 
-	Right_Shift(&R_dash, k);
-    bi_assign(Q, Q_dash);
-    bi_assign(R, R_dash);
+	Right_Shift(&R_dash, k);	// R_dash << k
+    bi_assign(Q, Q_dash);	// assign "Q_dash" to "Q"
+    bi_assign(R, R_dash);	// assign "R_dash" to "R"
 
     bi_delete(&A_dash);
     bi_delete(&B_dash);
@@ -203,38 +206,42 @@ void bi_divc(bigint* A, bigint* B, bigint** Q, bigint** R)
 
 void DIV(bigint* A, bigint* B, bigint** Q, bigint** R)
 {
-    if(B->sign == NEGATIVE) {
+    if(B->sign == NEGATIVE) {	// B < 0
         printf("invalid division\n");
         return;
     }
 
-    if(Compare_ABS(A, B) != 1) {
-        bi_set_zero(Q);
-        bi_assign(R, A);
+    if(Compare_ABS(A, B) == -1) {	// A < B
+        bi_set_zero(Q);		// Q <- 0
+        bi_assign(R, A);	// assgin "A" to "R"
     }
+	else if (Compare_ABS(A, B) == 0) {    // A == B
+		bi_set_one(Q);		// Q <- 1
+		bi_set_zero(R);		// R <- 0
+	}
 	else
 	{
-		bi_set_zero(Q);
-		bi_set_zero(R);
+		bi_set_zero(Q);		// Q <- 0
+		bi_set_zero(R);		// R <- 0
 
 		int n = A->wordlen;
 		bigint* A_i = NULL;
 		bigint* Q_i = NULL;
 		bigint* R_temp = NULL;
-		bi_set_zero(&A_i);
-		bi_new(&Q_i, 1);
+		bi_set_zero(&A_i);	// A_i <- 0
+		bi_new(&Q_i, 1);		
 		bi_new(Q, n);
 		for (int i = n - 1; i >= 0; i--) {
-			Left_Shift(R, WORD_BITLEN);
+			Left_Shift(R, WORD_BITLEN);		// R << WORD_BITLEN
 			A_i->a[0] = A->a[i];
-			bi_self_add(R, A_i);
-			bi_assign(&R_temp, *R);
-			bi_divc(R_temp, B, &Q_i, R);
+			bi_self_add(R, A_i);	// R <- R + A_i
+			bi_assign(&R_temp, *R);	// assign "R" to "R_temp"
+			bi_divc(R_temp, B, &Q_i, R);	// R_temp = B * Q_i + R
 			(*Q)->a[i] = Q_i->a[0];
 
 		}
-		bi_refine(*Q);
-		bi_refine(*R);
+		bi_refine(*Q);	// refine Q
+		bi_refine(*R);	// refine R
 		bi_delete(&A_i);
 		bi_delete(&Q_i);
 		bi_delete(&R_temp);
